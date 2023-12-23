@@ -8,7 +8,9 @@ from is_number import *                         #This function checks if the inp
 from vessel_volume import *                     #This function estimates the volume of the hoppers
 from curve_fitting import *                     #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
 
-#This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1. It also does a linear fit for shear stress vs normal stress
+
+#This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1.
+#It also does a linear fit for shear stress vs normal stress
 [a, b, c] = curve_fitting()
 
 print(a)
