@@ -1,13 +1,17 @@
 ## The goal of this function is to determine the height of the material in the hopper
 
+#Y = [0.518, 0.478, 0.313, 0.125, 0]
+#X = [0.125, 0.125, 0.025, 0.025, 0.018]
+#fill_percent = 25
 def height_position(X, Y, fill_percent):
     import numpy as np
     import math
     number = len(X) - 1                                                                         # number of sections of the vessel. Typically a hopper have two sections: one is cylinder and one is the cone. However, some hoppers may have several cones and cylinderical parts
     N = 1000                                                                                    # dividing the height of the hopper into N elements
     m = 0                                                                                       # overall numerator
-    vol = np.ones(number*N)                                                                     # The vertical distance for each section of the hopper is divided into 100 parts                                                                           # numerator
-    height = np.zeros(number*N)
+    vol = np.ones(number*N)
+    height = np.zeros(number*N)                                                                 # height of each mesh element from the top to the bottom (m)
+    radius = np.zeros(number*N)                                                                 # radius of at each mesh element from the top to the bottom (m)
     x_upper = np.zeros(number*N)                                                                # UPPER and LOWER will help the code determine whether the powder level is in the vertical or cone part of the hopper. This aids in choosing between the Janssen equation (for the vertical part) and the Motzkus equation (for the cone part)
     x_lower = np.zeros(number*N)
     for i in range(number):                                                                     # We estimate the volume of each section of the hopper individually. Then we add them altohther.
@@ -18,6 +22,7 @@ def height_position(X, Y, fill_percent):
             while (j < N):
                 vol[m] = vol_inc                                                                # volume at each volume element in the straight part of the hopper
                 height[m] = np.max([Y[i+1], Y[i]])-delY*(j+1)
+                radius[m] = X[i]
                 x_upper[m] = X[i]
                 x_lower[m] = X[i+1]
                 j = j + 1                                                                       # updating the numerator
@@ -30,6 +35,7 @@ def height_position(X, Y, fill_percent):
             j = 0                                                                               # local numerator
             while (j < N):
                 X_p_after = X[i] - (1+j) * delY * (X_p_before - X[i + 1]) / (Y_p_before - Y[i + 1])
+                radius[m] = X_p_after                                                                  # X coordinate corresponds to the height of the material
                 Y_p_after = Y_p_before + ((Y_p_before -Y[i + 1]) / (X_p_before - X[i + 1])) * (X_p_after-X_p_before)
                 vol_aux_big = (math.pi * X_p_before ** 2) * (abs(Y_p_before - Y_aux)) / 3               # volume the bigger imaginary cone (apex is imaginary): m^3
                 vol_aux_small = (math.pi * X_p_after ** 2) * (abs(Y_p_after - Y_aux)) / 3               # volume the smaller imaginary cone (apex is imaginary): m^3
@@ -43,18 +49,20 @@ def height_position(X, Y, fill_percent):
                 m = m + 1
 
 
-    ## the goal is this piece of the code is to find the height associated to the filling percent of the hopper
+    ## the goal is to find the height associated to the filling percent of the hopper
     volume = sum(vol)                                               #volume of the hopper! (m^3)                                                #reversing the list for the sake of convinience
     vol_cumulative = 100                                                #percent of the material in the hopper (it wil be updated)
     i = 0                                                               #numerator for the list
     while (i < number*N):
         vol_cumulative = vol_cumulative - 100*vol[i]/volume
         HEIGHT = height[i]
-        UPPER = x_upper[i]                                          # UPPER and LOWER will help the code determine whether the powder level is in the vertical or cone part of the hopper. This aids in choosing between the Janssen equation (for the vertical part) and the Motzkus equation (for the cone part)
+        UPPER = x_upper[i]                                          # UPPER and LOWER help the code determine whether the powder level is in the vertical or cone part of the hopper. This aids in choosing between the Janssen equation (for the vertical part) and the Motzkus equation (for the cone part)
         LOWER = x_lower[i]
+        RADIUS = radius[i]
         if vol_cumulative < fill_percent:                           # stop the while loop once we reach to the filling percent of the hopper
             break
         i = i + 1
 
-    #print(HEIGHT, UPPER, LOWER)
-    return HEIGHT, UPPER, LOWER
+
+    #print(HEIGHT, RADIUS, UPPER, LOWER)
+    return HEIGHT, RADIUS, UPPER, LOWER
