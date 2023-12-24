@@ -5,7 +5,7 @@ def volume_position(X, Y, fill_percent):
     import math
 
     number = len(X) - 1                                                                         # number of sections of the vessel. Typically a hopper have two sections: one is cylinder and one is the cone. However, some hoppers may have several cones and cylinders
-    N = 100                                                                                      # dividing the height of the hopper into N elements
+    N = 1000                                                                                      # dividing the height of the hopper into N elements
     m = 0                                                                                       # overal numerator
     vol = np.ones(number*N)                                                                     # The vertical distance for each section of the hopper is divided into 100 parts                                                                           # numerator
     height = np.zeros(number*N)
