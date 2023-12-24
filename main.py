@@ -14,9 +14,9 @@ from volume_position import *
 #It also does a linear fit for shear stress vs normal stress
 [a, b, c] = curve_fitting()
 
-print(a)
-print(b)
-print(c)
+#print(a)
+#print(b)
+#print(c)
 print('Choose one of the following systems by their number!')
 print('1. 1000L_IBC')
 print('2. 100L_IBC')
