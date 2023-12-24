@@ -39,8 +39,8 @@ if S == 1:
 X = r[k-1].x                    # X values for the position of the vessel
 Y = r[k-1].y                    # Y values for the position of the vessel
 [volume, percent, vol] = vessel_volume(X, Y)    # This function estimates the volume of the vessel
-HEIGHT = volume_position(X, Y, fill_percent)      # This function estimates the height of the material in the hopper (m)
-
+[HEIGHT, UPPER, LOWER] = volume_position(X, Y, fill_percent)      # This function estimates the height of the material in the hopper (m)
+print(UPPER, LOWER)
 
 
 
@@ -60,6 +60,7 @@ plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
 plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter", fontsize=18)                                                            # liter to m3
 plt.show()
+
 
 
 

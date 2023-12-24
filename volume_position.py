@@ -4,11 +4,13 @@ def volume_position(X, Y, fill_percent):
     import numpy as np
     import math
 
-    number = len(X) - 1                                                                         # number of sections of the vessel. Typically a hopper have two sections: one is cylinder and one is the cone. However, some hoppers may have several cones and cylinders
-    N = 1000                                                                                      # dividing the height of the hopper into N elements
-    m = 0                                                                                       # overal numerator
+    number = len(X) - 1                                                                         # number of sections of the vessel. Typically a hopper have two sections: one is cylinder and one is the cone. However, some hoppers may have several cones and cylinderical parts
+    N = 1000                                                                                    # dividing the height of the hopper into N elements
+    m = 0                                                                                       # overall numerator
     vol = np.ones(number*N)                                                                     # The vertical distance for each section of the hopper is divided into 100 parts                                                                           # numerator
     height = np.zeros(number*N)
+    x_upper = np.zeros(number*N)                                                                # UPPER and LOWER will help the code determine whether the powder level is in the vertical or cone part of the hopper. This aids in choosing between the Janssen equation (for the vertical part) and the Motzkus equation (for the cone part)
+    x_lower = np.zeros(number*N)
     for i in range(number):                                                                     # We estimate the volume of each section of the hopper individually. Then we add them altohther.
         delY = abs((Y[i + 1] - Y[i]) / N)                                                       # divide this section of the hopper into N elements
         if (X[i]/X[i+1] == 1):                                                                  # If the ratio of the points remains as 1, it means that we are dealing with a cylinder
@@ -17,6 +19,8 @@ def volume_position(X, Y, fill_percent):
             while (j < N):
                 vol[m] = vol_inc                                                                # volume at each volume element in the straight part of the hopper
                 height[m] = np.max([Y[i+1], Y[i]])-delY*(j+1)
+                x_upper[m] = X[i]
+                x_lower[m] = X[i+1]
                 j = j + 1                                                                       # updating the numerator
                 m = m + 1
 
@@ -34,6 +38,8 @@ def volume_position(X, Y, fill_percent):
                 X_p_before = X_p_after
                 Y_p_before = Y_p_after
                 height[m] = np.max([Y[i+1], Y[i]])-delY*(j+1)
+                x_upper[m] = X[i]
+                x_lower[m] = X[i + 1]
                 j = j + 1
                 m = m + 1
 
@@ -45,9 +51,11 @@ def volume_position(X, Y, fill_percent):
     while (i < number*N):
         vol_cumulative = vol_cumulative - 100*vol[i]/volume
         HEIGHT = height[i]
+        UPPER = x_upper[i]                                          # UPPER and LOWER will help the code determine whether the powder level is in the vertical or cone part of the hopper. This aids in choosing between the Janssen equation (for the vertical part) and the Motzkus equation (for the cone part)
+        LOWER = x_lower[i]
         if vol_cumulative < fill_percent:                           # stop the while loop once we reach to the filling percent of the hopper
             break
         i = i + 1
 
-    #print(HEIGHT)
-    return HEIGHT
+    #print(HEIGHT, UPPER, LOWER)
+    return HEIGHT, UPPER, LOWER
