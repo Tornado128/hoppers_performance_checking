@@ -1,5 +1,4 @@
-# This function check that our inputs for the filling percent of the vessel
-# and the index for the hoppers are numbers, and are processable
+# This function check that our inputs for the filling percent of the vessel and the index for the hoppers are numbers, and are processable
 def is_number(k,fill_percent):
     S = 0                             # If S remains 0, it menas that the information that user entered are processable. If it becomes 1, the inputs are either not ineger or not within the range.
     try:

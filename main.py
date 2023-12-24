@@ -7,6 +7,7 @@ from HopperSpecification import *               #This is a constructor where sev
 from is_number import *                         #This function checks if the inputs are numbers and if they are processable
 from vessel_volume import *                     #This function estimates the volume of the hoppers
 from curve_fitting import *                     #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
+from volume_position import *
 
 
 #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1.
@@ -38,15 +39,20 @@ if S == 1:
 X = r[k-1].x                    # X values for the position of the vessel
 Y = r[k-1].y                    # Y values for the position of the vessel
 [volume, percent, vol] = vessel_volume(X, Y)    # This function estimates the volume of the vessel
+HEIGHT = volume_position(X, Y, fill_percent)      # This function estimates the height of the material in the hopper (m)
 
-# showing the dimensions of the hopper
+
+
+
+## showing the dimensions of the hopper
 percent = percent[::-1]                 # reversing the percent of filling order for convinience
 plt.plot(r[k-1].x, r[k-1].y,'b-')
 plt.plot([-x for x in r[k-1].x], r[k-1].y,'b-')
-# putting label of percent of filling
+## putting label of percent of filling
 for i in range(len(X) - 1):
     plt.text(X[i],Y[i],'filling%: {}'.format(round(percent[i],1)),fontsize=16,color='g')
     plt.axhline(Y[i], color='g', linestyle='--')
+plt.axhline(HEIGHT, color='r', linestyle='--')
 plt.xlabel("(m)",fontsize=16)
 plt.ylabel("(m)",fontsize=16)
 plt.xticks(fontsize=16)
@@ -54,6 +60,7 @@ plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
 plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter", fontsize=18)                                                            # liter to m3
 plt.show()
+
 
 
 
