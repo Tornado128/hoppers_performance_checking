@@ -39,7 +39,7 @@ if S == 1:
 X = r[k-1].x                    # X values for the position of the vessel
 Y = r[k-1].y                    # Y values for the position of the vessel
 [volume, percent, vol] = vessel_volume(X, Y)                                                                            # This function estimates the volume of the vessel
-[HEIGHT, RADIUS, UPPER, LOWER] = height_position(X, Y, fill_percent)                                                            # This function estimates the height of the material in the hopper (m)
+[HEIGHT, RADIUS] = height_position(X, Y, fill_percent)                                                            # This function estimates the height of the material in the hopper (m)
 
 print(HEIGHT, RADIUS)
 ## showing the dimensions of the hopper
