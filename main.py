@@ -3,11 +3,11 @@
 
 import sys
 import matplotlib.pyplot as plt
-from HopperSpecification import *               #This is a constructor where several conical hoppers are defined as objects
-from is_number import *                         #This function checks if the inputs are numbers and if they are processable
-from vessel_volume import *                     #This function estimates the volume of the hoppers
-from curve_fitting import *                     #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
-from volume_position import *
+from HopperSpecification import *                                                                                       #This is a constructor where several conical hoppers are defined as objects
+from is_number import *                                                                                                 #This function checks if the inputs are numbers and if they are processable
+from vessel_volume import *                                                                                             #This function estimates the volume of the hoppers
+from curve_fitting import *                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
+from height_position import *                                                                                           #
 
 
 #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1.
@@ -24,9 +24,9 @@ print("3. Piccola")
 print('4. Courtoy')
 print('5. Korsch_XL100_poor_flow')
 print('6. Korsch_XL100_gravity')
-k = input("Enter the number! ")                                              # A number between 1 to 6 must be selected
+k = input("Enter the number! ")                                                                                         # A number between 1 to 6 must be selected
 
-fill_percent = input("Enter the filling percent of the hopper system! ")     # How much is the filling percent of the hopper vessel?
+fill_percent = input("Enter the filling percent of the hopper system! ")                                                # How much is the filling percent of the hopper vessel?
 
 # This function checks that k and fill_percent are numbers and they are within the range.
 # It stops the code if these conditions are not satisfied
@@ -38,12 +38,12 @@ if S == 1:
 # This function estimates the volume of the vessel
 X = r[k-1].x                    # X values for the position of the vessel
 Y = r[k-1].y                    # Y values for the position of the vessel
-[volume, percent, vol] = vessel_volume(X, Y)    # This function estimates the volume of the vessel
-[HEIGHT, UPPER, LOWER] = volume_position(X, Y, fill_percent)      # This function estimates the height of the material in the hopper (m)
+[volume, percent, vol] = vessel_volume(X, Y)                                                                            # This function estimates the volume of the vessel
+[HEIGHT, UPPER, LOWER] = height_position(X, Y, fill_percent)                                                            # This function estimates the height of the material in the hopper (m)
 
 
 ## showing the dimensions of the hopper
-percent = percent[::-1]                 # reversing the percent of filling order for convinience
+percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
 plt.plot(r[k-1].x, r[k-1].y,'b-')
 plt.plot([-x for x in r[k-1].x], r[k-1].y,'b-')
 ## putting label of percent of filling

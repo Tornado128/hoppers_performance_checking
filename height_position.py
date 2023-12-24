@@ -1,6 +1,6 @@
 ## The goal of this function is to determine the height of the material in the hopper
 
-def volume_position(X, Y, fill_percent):
+def height_position(X, Y, fill_percent):
     import numpy as np
     import math
     number = len(X) - 1                                                                         # number of sections of the vessel. Typically a hopper have two sections: one is cylinder and one is the cone. However, some hoppers may have several cones and cylinderical parts
