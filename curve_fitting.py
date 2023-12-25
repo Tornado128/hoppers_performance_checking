@@ -21,6 +21,8 @@ def curve_fitting():
 	SIGMA = df_wall.iloc[:,1]				# consolidation stress (pa)
 	TAU = df_wall.iloc[:,2]					# shear stress (pa)
 
+	WFA = np.arctan(TAU/SIGMA)*180/np.pi	# wall friction angle (degree)
+
 	## defining arrays of zero. a, b and c are the fitting coefficients for linear and powder curve fittings.
 	## The goal of fitting is to have a continuous function for FC, FFC, rhob, PHIE and PHILIN as a function of sigma1 (major principal stress)
 	a = np.zeros(5)
@@ -35,6 +37,10 @@ def curve_fitting():
 	def objective_power(x, a, b, c):
 		return a * x ** b + c
 
+	## Power objective function for WFA (the intercept is defined as 90 degrees because we expect that wall friction angle approaches 90 degrees at low sigma)
+	def objective_power_wall(x, a, b):
+		return a * x ** b + 90
+
 
 	popt, _ = curve_fit(objective_power, sigma1, rhob, maxfev=5000)     ## curve fitting for rhob vs sigma1 (power equation)
 	a[0], b[0], c[0] = popt                                             ## summarize the parameter values
@@ -44,10 +50,10 @@ def curve_fitting():
 	a[2], b[2] = popt                                                   ## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, PHILIN)               ## curve fitting for PHILIN vs sigma1 (linear equation)
 	a[3], b[3] = popt                                                   ## summarize the parameter values
-	popt, _ = curve_fit(objective_linear, SIGMA, TAU)               	## curve fitting for PHILIN vs sigma1 (linear equation)
+	popt, _ = curve_fit(objective_power_wall, SIGMA, WFA)               ## curve fitting for WFA vs SIGMA (power equation)
 	a[4], b[4] = popt                                                   ## summarize the parameter values
-
-	return (a, b, c)													## retruning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
+	c[4] = 90
+	return (a, b, c)													## returning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
 '''
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
@@ -63,8 +69,8 @@ print('y = %.8f * x + %.8f' % (a[2], b[2]), '; R2 = ', r2_score(y_pred_FC, FC))
 y_pred_PHILIN = objective_linear(sigma1, a[3], b[3])
 print('y = %.8f * x + %.8f' % (a[3], b[3]), '; R2 = ', r2_score(y_pred_PHILIN, PHILIN))
 
-y_pred_TAU = objective_linear(SIGMA, a[4], b[4])
-print('y = %.8f * x + %.8f' % (a[4], b[4]), '; R2 = ', r2_score(y_pred_TAU, TAU))
+y_pred_WFA = objective_power_wall(SIGMA, a[4], b[4])
+print('y = %.8f * x^ %.8f + 90' % (a[4], b[4]), '; R2 = ', r2_score(y_pred_WFA, WFA))
 
 plt.plot(sigma1, PHIE, 'o',sigma1, y_pred_PHIE, '--')
 plt.xlabel("major principal stress (pa)",fontsize=16)
@@ -98,11 +104,11 @@ plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 plt.show()
 
-plt.plot(SIGMA, TAU, 'o',SIGMA, y_pred_TAU, '--')
+plt.plot(SIGMA, WFA, 'o',SIGMA, y_pred_WFA, '*')
 plt.xlabel("consolidation pressure (pa)",fontsize=16)
-plt.ylabel("shear stress (pa)",fontsize=16)
+plt.ylabel("wall friction angle",fontsize=16)
 plt.xlim((0, max(SIGMA)))
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
-plt.show()
+##plt.show()
 '''
