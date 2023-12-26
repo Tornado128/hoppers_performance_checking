@@ -4,7 +4,6 @@
 def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
-    import matplotlib.pyplot as plt
 
     #X1 = 0.2845; X2 = 0.2845; Y1 = 0.4372; Y2 = 0.325
     D = 2*X1                                                                            # diameter of this section of the hopper
@@ -15,12 +14,10 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     # a, b and c are the coefficients for power and linear curve fittings.
     [a, b, c] = curve_fitting()
 
-                                                              # diameter of the cylinderical part of the hopper (m): used in Janssen equation
-
-
     delY = (Y1 - Y2)/N                                                  # increment size in z direction (m)
-    sigmav=0.01*np.ones(N+1)                                            # powder load in the vertical section of the hopper (pa) (it varies with z)
-    z_loc = np.zeros(N+1)                                               # increments in the vertical direction (m)
+    sigmav=0.1*np.ones(N)                                               # powder load in the vertical section of the hopper (pa) (it varies with z)
+    sigmav[0] = sigmav_init
+    z_loc = np.zeros(N)                                                 # increments in the vertical direction (m)
     rhob=np.zeros(N)                                                    # bulk density (kg/m3)
     PHIE=np.zeros(N)                                                    # effective angle of internal friction (degree)
     UYS=np.zeros(N)                                                     # unconfined yield strength or "FC" (pa)
@@ -40,7 +37,7 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
         # while loop checks that error percent (between our initial guess and the estimation) is below 0.1%
-        while (error_percent>0.1 and j<100):
+        while (error_percent>0.1 and j<100 and i<N-1):
             rhob[i] = a[0] * sigmav_guess ** b[0] + c[0]
             PHIE[i] = a[1] * sigmav_guess ** b[1] + c[1]
             UYS[i] = a[2] * sigmav_guess + b[2]
@@ -49,13 +46,11 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
             sigmav[i+1] = (g * rhob[i] - (4 * K / D) * np.tan(WFA[i] * np.pi / 180) * sigmav_guess) * delY + sigmav[i]
             error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
             sigmav_guess = sigmav[i+1]
+            z_loc[i + 1] = (i + 1) * delY
 
             j = j + 1
-        z_loc[i+1] = (i+1) * delY
-    #plt.plot(z_loc, sigmav, 'b-')
-    #plt.xlabel("(m)", fontsize=16)
-    #plt.ylabel("v", fontsize=16)
-    #plt.show()
+    sigmav[N-1] = sigmav[N-1]
+    z_loc[N-1] = (N-1) * delY
     return sigmav
 
 

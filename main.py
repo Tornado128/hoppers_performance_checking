@@ -6,17 +6,8 @@ import matplotlib.pyplot as plt
 from HopperSpecification import *                                                                                       #This is a constructor where several conical hoppers are defined as objects
 from is_number import *                                                                                                 #This function checks if the inputs are numbers and if they are processable
 from vessel_volume import *                                                                                             #This function estimates the volume of the hoppers
-from curve_fitting import *                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
 from height_position import *                                                                                           #This function estimates the height ("HEIGHT") of the powder in the hopper. It also gives the radius (RADIUS) corresponds to the height of the powder in the hopper
 
-
-#This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1.
-#It also does a linear fit for shear stress vs normal stress
-[a, b, c] = curve_fitting()
-
-print(a)
-print(b)
-print(c)
 print('Choose one of the following systems by their number!')
 print('1. 1000L_IBC')
 print('2. 100L_IBC')
@@ -36,12 +27,15 @@ if S == 1:
     sys.exit(1)     # stop running the code
 
 # This function estimates the volume of the vessel
+# percent is the volume percent associated with each section of the hopper
 X = r[k-1].x                    # X values for the position of the vessel
 Y = r[k-1].y                    # Y values for the position of the vessel
-[volume, percent, vol] = vessel_volume(X, Y)                                                                            # This function estimates the volume of the vessel
-[HEIGHT, RADIUS] = height_position(X, Y, fill_percent)                                                            # This function estimates the height of the material in the hopper (m)
+[volume, percent, vol] = vessel_volume(X, Y)
 
-print(HEIGHT, RADIUS)
+# This function estimates the HEIGHT of the material in the hopper (m)
+# It also gives the radius (or x-location) associated with the height of the powder
+[HEIGHT, RADIUS] = height_position(X, Y, fill_percent)
+
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
 plt.plot(r[k-1].x, r[k-1].y,'b-')

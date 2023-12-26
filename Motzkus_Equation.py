@@ -13,12 +13,12 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
 
     #Y = [0.325, 0]
     #X = [0.2845, 0.2]
-    Y1 = 0.325
-    Y2 = 0
-    X1 = 0.28845
-    X2 = 0.2
+    #Y1 = 0.325
+    #Y2 = 0
+    #X1 = 0.28845
+    #X2 = 0.2
 
-    Y_apex = ((Y2-Y1)/(X2-X1))*(0-X1)+Y1                                                                                    # imaginary position of the apex of the cone (see Figure 4 of the reference)
+    Y_apex = ((Y2-Y1)/(X2-X1))*(0-X1)+Y1                                                                                # imaginary position of the apex of the cone (see Figure 4 of the reference)
 
     g = 9.8                                                                                                             # gravity (m/s2)
     #This function fits bulk density, effective angle of internal
@@ -28,9 +28,9 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
 
     theta = (np.pi/2 - np.arctan((Y2-Y1)/(X2-X1)))*180/np.pi                                                            # hopper vertical angle (degree)
     delY = (Y1 - Y2) / N                                                                                            # increment size in z direction (m)
-    sigmav = 0.1*np.ones(N + 1)                                                                                         # powder load in the vertical section of the hopper (pa) (it varies with z)
-    sigmav[0] = 50000
-    z_loc = np.zeros(N + 1)                                                                                             # increments in the vertical direction (m)
+    sigmav = 0.1*np.ones(N)                                                                                         # powder load in the vertical section of the hopper (pa) (it varies with z)
+    sigmav[0] = sigmav_init
+    z_loc = np.zeros(N)                                                                                             # increments in the vertical direction (m)
     rhob = np.zeros(N)                                                                                                  # bulk density (kg/m3)
     PHIE = np.zeros(N)                                                                                                  # effective angle of internal friction (degree)
     UYS = np.zeros(N)                                                                                                   # unconfined yield strength or "FC" (pa)
@@ -76,7 +76,7 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
         # while loop checks that error percent (between our initial guess and the estimation) is below 0.1%
-        while (error_percent>0.1 and j<100):
+        while (error_percent>0.1 and j<100 and i<N-1):
             rhob[i] = a[0] * sigmav_guess ** b[0] + c[0]
             PHIE[i] = a[1] * sigmav_guess ** b[1] + c[1]
             UYS[i] = a[2] * sigmav_guess + b[2]
@@ -85,9 +85,11 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
             sigmav[i+1] = (g * rhob[i] - n*sigmav_guess/((Y1-Y_apex-z_loc[i])))*delY + sigmav[i]
             error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
             sigmav_guess = sigmav[i+1]
+            z_loc[i + 1] = (i + 1) * delY
 
             j = j + 1
-        z_loc[i+1] = (i+1) * delY
+    sigmav[N-1] = sigmav[N-2]
+    z_loc[N-1] = (N-1) * delY
     return sigmav
 #print(sigmav[N])
 ##plt.plot(sigmav, z_loc, 'b-')
