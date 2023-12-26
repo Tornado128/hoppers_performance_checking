@@ -17,7 +17,7 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     delY = (Y1 - Y2)/N                                                  # increment size in z direction (m)
     sigmav=0.1*np.ones(N)                                               # powder load in the vertical section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init
-    z_loc = np.zeros(N)                                                 # increments in the vertical direction (m)
+    z_loc = np.zeros(N)                                                 # vertical direction from the top to the bottom (m)
     rhob=np.zeros(N)                                                    # bulk density (kg/m3)
     PHIE=np.zeros(N)                                                    # effective angle of internal friction (degree)
     UYS=np.zeros(N)                                                     # unconfined yield strength or "FC" (pa)

@@ -36,6 +36,9 @@ Y = r[k-1].y                    # Y values for the position of the vessel
 # It also gives the radius (or x-location) associated with the height of the powder
 [HEIGHT, RADIUS] = height_position(X, Y, fill_percent)
 
+print(HEIGHT)
+print(RADIUS)
+
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
 plt.plot(r[k-1].x, r[k-1].y,'b-')
