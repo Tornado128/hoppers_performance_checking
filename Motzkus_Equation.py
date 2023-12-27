@@ -100,7 +100,7 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
         sigma1[i] = 0.5 * sigmav[i] * (1 + lambda_f) + (K_for_MPS_calculation * sigmav[i] - sigmav[i] * (1 + lambda_f) / 2) / np.cos(math.radians(beta_p))
         # sigma1 may become negative at very low consolidation stresses at the top of the powder.
         if sigma1[i]<0:
-            sigma1[i] = sigmav[i]
+            sigma1[i] = 0
 
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delY

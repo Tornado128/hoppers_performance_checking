@@ -4,7 +4,7 @@ def stress_in_active_state(HEIGHT, RADIUS, X, Y):
     import numpy as np
     from Janssen_Equation import Janssen_Equation
     from Motzkus_Equation import Motzkus_Equation
-    #import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
 
     #Y = [0.49, 0.28, 0.028, 0]
     #X = [0.0955, 0.0955, 0.043, 0.043]
@@ -26,7 +26,8 @@ def stress_in_active_state(HEIGHT, RADIUS, X, Y):
     # 2 -> FC
     # 3 -> PHILIN
     # 4 -> wall friction
-
+    print(XX)
+    print(YY)
     N = 10000                                                               # number of mesh in the vertical section
     number = len(XX) - 1                                                    # number of sections in hopper (a hopper may have several cylinderical and cone parts)
     sigmav = np.zeros(number*N)                                             # We initialized sigma0 (vertical stress) for the top of the powder as 0.
@@ -45,6 +46,7 @@ def stress_in_active_state(HEIGHT, RADIUS, X, Y):
             sigmav_init = sigmav[i*N-i]
             #print(sigmav[i*N-1])
             [sigmav_out, sigma1_out]=Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init)
+            print(sigmav_out[-1])
             sigmav[i*N:(i+1)*N] = sigmav_out[:N]
             sigma1[i*N:(i+1)*N] = sigma1_out[:N]
             #print(sigmav_out[N-1])
@@ -55,7 +57,6 @@ def stress_in_active_state(HEIGHT, RADIUS, X, Y):
             sigmav[i*N:(i+1)*N] = sigmav_out[:N]
             sigma1[i*N:(i+1)*N] = sigma1_out[:N]
             #print(sigmav_out[N - 1])
-
     return z, sigmav, sigma1
 #plt.plot(sigmav,z,'--')
 #plt.plot(sigmav,'--')
