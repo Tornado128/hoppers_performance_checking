@@ -19,7 +19,6 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     #X2 = 0.2
 
     Y_apex = ((Y2-Y1)/(X2-X1))*(0-X1)+Y1                                                                                # imaginary position of the apex of the cone (see Figure 4 of the reference)
-
     g = 9.8                                                                                                             # gravity (m/s2)
     #This function fits bulk density, effective angle of internal
     # friction, FC and FFC vs sigma1.It also does a power fit for wall friction angle vs normal stress
@@ -30,6 +29,7 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     delY = (Y1 - Y2) / N                                                                                            # increment size in z direction (m)
     sigmav = 0.1*np.ones(N)                                                                                         # powder load in the vertical section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init
+    sigma1 = 0.1 * np.ones(N)                                                                                           # major principal stress (sigma1) (pa)
     z_loc = np.zeros(N)                                                                                             # increments in the vertical direction (m)
     rhob = np.zeros(N)                                                                                                  # bulk density (kg/m3)
     PHIE = np.zeros(N)                                                                                                  # effective angle of internal friction (degree)
@@ -53,6 +53,7 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
         if (WFA[i]>PHIE[i]):
             WFA[i] = PHIE[i]                            # Wall friction angle may be unphysically larger than effective angle of internal friction at very low stresses (close to the top of the powder)
 
+        # Eq. (12) of the reference
         lambda_if = (1 - np.sin(math.radians(WFA[i])) ** 2.0 - np.sqrt(
             (1 - np.sin(math.radians(WFA[i])) ** 2) * (np.sin(math.radians(PHIE[i])) ** 2 - np.sin(math.radians(WFA[i])) ** 2))) / (
                             1 + np.sin(math.radians(WFA[i])) ** 2.0 + np.sqrt((1 - np.sin(math.radians(WFA[i])) ** 2) * (
@@ -88,9 +89,23 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
             z_loc[i + 1] = (i + 1) * delY
 
             j = j + 1
+
+        # It is the same as Eq. (14) of the reference
+        K_for_MPS_calculation = 0.5 * (1 + lambda_f) - 0.5 * (1 - lambda_f) * np.cos(2 * math.radians(theta)) + mu_f * lambda_f * np.sin(2 * math.radians(theta))
+
+        # Eq. (18) of the reference
+        beta_p = math.degrees(np.arctan(((1 + np.cos(2 * math.radians(theta))) * np.tan(math.radians(WFA[i]))) / (1 + np.sin(2 * math.radians(theta)) * np.tan(math.radians(WFA[i])) - 1 / K_for_MPS_calculation)))
+
+        # # major principal stress at the outlet of the hopper (Pa): Eq. (17) of the appendix in the reference
+        sigma1[i] = 0.5 * sigmav[i] * (1 + lambda_f) + (K_for_MPS_calculation * sigmav[i] - sigmav[i] * (1 + lambda_f) / 2) / np.cos(math.radians(beta_p))
+        # sigma1 may become negative at very low consolidation stresses at the top of the powder.
+        if sigma1[i]<0:
+            sigma1[i] = sigmav[i]
+
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delY
-    return sigmav
+
+    return sigmav, sigma1
 #print(sigmav[N])
 ##plt.plot(sigmav, z_loc, 'b-')
 ##plt.ylabel("distance from top of the cone to the apex (m)", fontsize=16)
