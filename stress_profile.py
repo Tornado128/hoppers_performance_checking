@@ -1,5 +1,5 @@
 ## This function estimates the stress profile in the hopper in active (initial discharging and filling) mode
-def stress_in_active_state(HEIGHT, RADIUS, X, Y):
+def stress_profile(HEIGHT, RADIUS, X, Y):
 
     import numpy as np
     from Janssen_Equation import Janssen_Equation

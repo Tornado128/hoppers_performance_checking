@@ -10,7 +10,7 @@ from HopperSpecification import *                                               
 from is_number import *                                                                                                 #This function checks if the inputs are numbers and if they are processable
 from vessel_volume import *                                                                                             #This function estimates the volume of the hoppers
 from height_position import *                                                                                           #This function estimates the height ("HEIGHT") of the powder in the hopper. It also gives the radius (RADIUS) corresponds to the height of the powder in the hopper
-from stress_in_active_state import *
+from stress_profile import *
 from curve_fitting import *
 
 
@@ -43,7 +43,7 @@ Y = r[k-1].y                    # Y values for the position of the vessel
 [HEIGHT, RADIUS] = height_position(X, Y, fill_percent)
 
 # vertical stress by the powder in the active mode
-[z, sigmav, sigma1] = stress_in_active_state(HEIGHT, RADIUS, X, Y)
+[z, sigmav, sigma1] = stress_profile(HEIGHT, RADIUS, X, Y)
 
 # we will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
