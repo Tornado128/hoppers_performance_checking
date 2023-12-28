@@ -38,6 +38,7 @@ def stress_in_active_state(HEIGHT, RADIUS, X, Y):
         else:                                                               # We are in the cone part of the hopper
             sigmav_init = sigmav[i*N-i]
             [sigmav_out, sigma1_out]=Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init)
+            print(sigmav_out[-1])
             sigmav[i*N:(i+1)*N] = sigmav_out[:N]
             sigma1[i*N:(i+1)*N] = sigma1_out[:N]
     return z, sigmav, sigma1

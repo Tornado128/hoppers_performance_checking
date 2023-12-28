@@ -63,10 +63,10 @@ else:
     output_active = "Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)"
     print("Arching diameter is " + str("{:.2f}".format(D_arching)) + " m")
 
-#print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " Pa")
-#print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
-#print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
-#print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
+print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " Pa")
+print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
+print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
+print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
