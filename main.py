@@ -56,17 +56,17 @@ H = (130 +theta)/65                                                             
 sigma = rhob[-1]*9.8*2*X[-1]/H                                                                                          # external stress: see eq. (2) of the reference
 D_arching = H * UYS[-1] / (rhob[-1]*9.8)                                                                                # arching diameter calculation based on Eq. (2) and Eq. (3)
 if (sigma > UYS[-1]):
-    print("No arch in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)" )
-    output_active = "No arch in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)"                                                                      # It will be shown in the title of the plots
+    print("No arching in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)" )
+    output_active = "No arching in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)"                                                                      # It will be shown in the title of the plots
 else:
     print("Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)")
     output_active = "Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)"
     print("Arching diameter is " + str("{:.2f}".format(D_arching)) + " m")
 
-print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " Pa")
-print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
-print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
-print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
+#print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " Pa")
+#print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
+#print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
+#print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
@@ -82,7 +82,7 @@ plt.ylabel("(m)",fontsize=16)
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
-plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter", fontsize=18)                                                            # liter to m3
+plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active, fontsize=18)                                                            # liter to m3
 plt.show()
 
 plt.plot(sigmav,z,'o')

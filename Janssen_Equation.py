@@ -1,6 +1,7 @@
-## We implemented implicit Euler method to solve Janssen equation numerically
-## The details for Janssen equation is given in "Schulze, Dietmar, and Dietmar Schulze. "Flow properties of bulk solids." Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
-## Implicit methods are always stable although they are often slower in coverging compared to explicit methods
+# (1) We implemented implicit Euler method to solve Janssen equation numerically in the cylinderical part of the hopper. This function gives us
+# vertical stress distribution (sigmav) and major principal stress (sigma1)
+# (2) The details for Janssen equation is given in "Schulze, Dietmar, and Dietmar Schulze. "Flow properties of bulk solids." Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
+# (3) Implicit methods are always stable although they are often slower in coverging compared to explicit methods
 def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
@@ -9,14 +10,15 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     D = 2*X1                                                                            # diameter of this section of the hopper
     g = 9.8                                                                             # gravity (m/s2)
     K = 0.4                                                                             # horizontal stress to vertical stress ratio (it is typically between 0.3 to 0.6 in hoppers and silos)
+
     #This function fits bulk density, effective angle of internal
     # friction, FC and FFC vs sigma1.It also does a power fit for WFA vs normal stress
     # a, b and c are the coefficients for power and linear curve fittings.
     [a, b, c] = curve_fitting()
 
     delY = (Y1 - Y2)/N                                                  # increment size in z direction (m)
-    sigmav=0.1*np.ones(N)                                               # powder load in the vertical section of the hopper (pa) (it varies with z)
-    sigmav[0] = sigmav_init
+    sigmav=0.1*np.ones(N)                                               # vertical load in the vertical section of the hopper (pa) (it varies with z)
+    sigmav[0] = sigmav_init                                             # vertical load at the top of the cylinderical part of the hopper
     sigma1 = 0.1*np.ones(N)                                             # major principal stress (pa)
     z_loc = np.zeros(N)                                                 # vertical direction from the top to the bottom (m)
     rhob=np.zeros(N)                                                    # bulk density (kg/m3)

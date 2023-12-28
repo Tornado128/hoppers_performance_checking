@@ -1,4 +1,4 @@
-## The goal of this function is to determine the height of the material in the hopper
+## The goal of this function is to determine the height of the material in the hopper at a given filling percent
 
 #Y = [0.518, 0.478, 0.313, 0.125, 0]
 #X = [0.125, 0.125, 0.025, 0.025, 0.018]
