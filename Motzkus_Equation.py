@@ -100,7 +100,7 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
         sigma1[i] = 0.5 * sigmav[i] * (1 + lambda_f) + (K_for_MPS_calculation * sigmav[i] - sigmav[i] * (1 + lambda_f) / 2) / np.cos(math.radians(beta_p))
         # sigma1 may become negative at very low consolidation stresses at the top of the powder.
         if sigma1[i]<0:
-            sigma1[i] = 0
+            sigma1[i] = None
 
         # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
         PHILIN_p = a[3]*sigma1[i]+b[3]

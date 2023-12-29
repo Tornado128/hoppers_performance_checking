@@ -1,9 +1,12 @@
-## (1) This code is based on Leung, Lap Yin, et al. "A proposed complete methodology to predict gravity flow obstruction of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475."
+## (1) This code is based on Leung, Lap Yin, et al. "A proposed complete methodology to predict gravity flow obstruction
+## of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475."
 ## (2) The purpose of this piece of code is to assess the vertical load (sigmav), major principal stress (sigma1) and
 ## unconfined yeild strength (UYS) in a GIVEN conical hopper in both active (filling) and passive modes (emptying).
 ## (3) The stress profile later is used to determine if there is a mass flow or funnel flow in passive mode.
 ## (4) If there is a mass flow regime in the given hopper, the code determines if an arch forms or not
 ## (5) If there is a funnel flow regime in the given hopper, the code determines if a rathole forms in the hopper
+## Note: Remember that Jenike method is very conservative for the estimation of arch diameter. It is even more conservative
+## for the prediction of rathole diameter
 
 import matplotlib.pyplot as plt
 import sys
@@ -94,8 +97,8 @@ for i in range(len(X) - 1):
     plt.text(X[i],Y[i],'filling%: {}'.format(round(percent[i],1)),fontsize=16,color='g')
     plt.axhline(Y[i], color='g', linestyle='--')
 plt.axhline(HEIGHT, color='r', linestyle='--')
-plt.xlabel("(m)",fontsize=16)
-plt.ylabel("(m)",fontsize=16)
+plt.xlabel("x-axis (m)",fontsize=16)
+plt.ylabel("y-axis (m)",fontsize=16)
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
