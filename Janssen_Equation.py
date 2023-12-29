@@ -2,7 +2,7 @@
 # vertical stress distribution (sigmav) and major principal stress (sigma1)
 # (2) The details for Janssen equation is given in "Schulze, Dietmar, and Dietmar Schulze. "Flow properties of bulk solids." Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
 # (3) Implicit methods are always stable although they are often slower in coverging compared to explicit methods
-def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
+def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init, RADIUS):
     import numpy as np
     from curve_fitting import curve_fitting                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
 
@@ -20,7 +20,9 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     sigmav=0.1*np.ones(N)                                               # vertical load in the vertical section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init                                             # vertical load at the top of the cylinderical part of the hopper
     sigma1 = 0.1*np.ones(N)                                             # major principal stress (pa)
+    sigmaf_o = 0.1*np.ones(N)                                           # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
     z_loc = np.zeros(N)                                                 # vertical direction from the top to the bottom (m)
+
     rhob=np.zeros(N)                                                    # bulk density (kg/m3)
     PHIE=np.zeros(N)                                                    # effective angle of internal friction (degree)
     UYS=np.zeros(N)                                                     # unconfined yield strength or "FC" (pa)
@@ -52,10 +54,16 @@ def Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init):
             z_loc[i + 1] = (i + 1) * delY
 
             j = j + 1
+
+        # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
+        PHILIN_p = a[3] * sigma1[i] + b[3]
+        G = -5.066 + 0.490 * PHILIN_p - 0.0112 * PHILIN_p ** 2 + 0.000108 * PHILIN_p ** 3  ## Eq. (23) of the reference (used only for the funnel flow case)
+        sigmaf_o[i] = rhob[i] * g * (2 * RADIUS) / G
+
     sigmav[N-1] = sigmav[N-1]
     z_loc[N-1] = (N-1) * delY
     sigma1[:N] = sigmav[:N]                                                                                             #For cylinderical part of a hopper, major principal stress (sigma1) is equal to the vertical stress
-    return sigmav, sigma1
+    return sigmav, sigma1, WFA, PHIE, rhob, sigmaf_o, UYS
 
 
 

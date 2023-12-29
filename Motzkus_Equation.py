@@ -6,7 +6,7 @@
 #(5) The reason for picking the numerical approach to solve Eq. (7) of the above referebce is that the parameters like
 #wall friction angle, bulk density, ... are changing in the vertical direction because of the increasing load
 
-def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
+def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
     import numpy as np
     from curve_fitting import curve_fitting
     import math
@@ -28,7 +28,9 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
     sigmav = 0.1*np.ones(N)                                                                                             # vertical stress in the cone section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init                                                                                             # vertical stress (pa) at the top of the cone section of the hopper.
     sigma1 = 0.1 * np.ones(N)                                                                                           # major principal stress (sigma1) (pa)
+    sigmaf_o = 0.1*np.ones(N)                                                                                           # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
     z_loc = np.zeros(N)                                                                                                 # increments in the vertical direction (m)
+
     rhob = np.zeros(N)                                                                                                  # bulk density (kg/m3)
     PHIE = np.zeros(N)                                                                                                  # effective angle of internal friction (degree)
     UYS = np.zeros(N)                                                                                                   # unconfined yield strength or "FC" (pa)
@@ -100,10 +102,15 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init):
         if sigma1[i]<0:
             sigma1[i] = 0
 
+        # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
+        PHILIN_p = a[3]*sigma1[i]+b[3]
+        G = -5.066 + 0.490*PHILIN_p-0.0112*PHILIN_p**2+0.000108*PHILIN_p**3                                ## Eq. (23) of the reference (used only for the funnel flow case)
+        sigmaf_o[i] = rhob[i]*g*(2*RADIUS)/G
+
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delY
 
-    return sigmav, sigma1
+    return sigmav, sigma1, WFA, PHIE, rhob, sigmaf_o, UYS
 #print(sigmav[N])
 ##plt.plot(sigmav, z_loc, 'b-')
 ##plt.ylabel("distance from top of the cone to the apex (m)", fontsize=16)
