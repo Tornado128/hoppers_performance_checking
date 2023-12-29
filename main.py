@@ -51,13 +51,13 @@ Y = r[k-1].y                    # Y values for the position of the vessel
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
 [z, sigmav, sigma1, F, P] = stress_profile(HEIGHT, RADIUS, X, Y)
 if (F==1 and P==2):
-    output_passive = "We have funnel flow with rathole"
+    output_passive = "We have funnel flow with rathole in the passive state"
 if (F==1 and P==-2):
-    output_passive = "We have funnel flow but without rathole"
+    output_passive = "We have funnel flow but without rathole in the passive state"
 if (F==0 and P==0):
-    output_passive = "We have mass flow without any arch formation"
+    output_passive = "We have mass flow without any arch formation in the passive state"
 if (F==0 and P==1):
-    output_passive = "We have mass flow with arch formation"
+    output_passive = "We have mass flow with arch formation in the passive state"
 
 # Chance of arch formation in the active state
 # We will call curve fitting function to obtain fc (or UYS:unconfined yield strength)

@@ -6,6 +6,8 @@ def MassFlow_or_FunnelFlow(X1, X2, Y1, Y2, sigmav, sigma1, PHIE, rhob, WFA, UYS,
     import math
 
     # Eq. (5) and Eq. (6) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475
+    if (WFA[-1]>PHIE[-1]):
+        WFA[-1] = PHIE[-1]          #To avoid nan to estimate beta in the next line
     beta = (WFA[-1] + (180 / np.pi) * np.arcsin(np.sin(WFA[-1] * np.pi / 180) / np.sin(PHIE[-1] * np.pi / 180))) / 2
     theta_critical = 90 - 0.5 * (180 / np.pi) * np.arccos((1 - np.sin(PHIE[-1] * np.pi / 180)) / (2 * np.sin(PHIE[-1] * np.pi / 180))) - beta
 
