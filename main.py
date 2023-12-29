@@ -1,18 +1,20 @@
 ## (1) This code is based on Leung, Lap Yin, et al. "A proposed complete methodology to predict gravity flow obstruction of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475."
-## (2) The purpose of this piece of code is to assess the flow regime in a conical hopper in active and passive modes
+## (2) The purpose of this piece of code is to assess the vertical load (sigmav), major principal stress (sigma1) and
+## unconfined yeild strength (UYS) in a GIVEN conical hopper in both active (filling) and passive modes (emptying).
+## (3) The stress profile later is used to determine if there is a mass flow or funnel flow in passive mode.
+## (4) If there is a mass flow regime in the given hopper, the code determines if an arch forms or not
+## (5) If there is a funnel flow regime in the given hopper, the code determines if a rathole forms in the hopper
 
 import matplotlib.pyplot as plt
 import sys
-
 import numpy as np
-
 from HopperSpecification import *                                                                                       #This is a constructor where several conical hoppers are defined as objects
 from is_number import *                                                                                                 #This function checks if the inputs are numbers and if they are processable
 from vessel_volume import *                                                                                             #This function estimates the volume of the hoppers
 from height_position import *                                                                                           #This function estimates the height ("HEIGHT") of the powder in the hopper. It also gives the radius (RADIUS) corresponds to the height of the powder in the hopper
-from stress_profile import *
-from curve_fitting import *
-
+from stress_profile import *                                                                                            #This function estimates the stress profile in both active and passive modes
+from curve_fitting import *                                                                                             #This function does linear and power curve fitting on effective angle of internal friction, bulk density,
+                                                                                                                        #linearized angle of internal friction, wall friction angle and UYS vs MPS.
 
 print('Choose one of the following systems by their number!')
 print('1. 1000L_IBC')
@@ -26,7 +28,7 @@ k = input("Enter the number! ")                                                 
 fill_percent = input("Enter the filling percent of the hopper system! ")                                                # How much is the filling percent of the hopper vessel?
 
 # This function checks that k and fill_percent are numbers and they are within the range.
-# It stops the code if these conditions are not satisfied
+# It stops the code if the above conditions are not satisfied
 [S, k, fill_percent]=is_number(k,fill_percent)
 if S == 1:
     print("One of or both the numbers you entered is not processable! I have to stop the code!")
@@ -42,16 +44,29 @@ Y = r[k-1].y                    # Y values for the position of the vessel
 # It also gives the radius (or x-location) associated with the height of the powder
 [HEIGHT, RADIUS] = height_position(X, Y, fill_percent)
 
-# vertical stress by the powder in the active mode
-[z, sigmav, sigma1] = stress_profile(HEIGHT, RADIUS, X, Y)
+# Vertical stress by the powder in both active and passive mode
+# Passive state: F=1 is funnel flow and F=0 is mass flow in the passive state
+# Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
+# Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
+# Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
+[z, sigmav, sigma1, F, P] = stress_profile(HEIGHT, RADIUS, X, Y)
+if (F==1 and P==2):
+    output_passive = "We have funnel flow with rathole"
+if (F==1 and P==-2):
+    output_passive = "We have funnel flow but without rathole"
+if (F==0 and P==0):
+    output_passive = "We have mass flow without any arch formation"
+if (F==0 and P==1):
+    output_passive = "We have mass flow with arch formation"
 
-# we will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
+# Chance of arch formation in the active state
+# We will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
 # UYS = a[2]*sigma1+b[2]), a[0] and b[0] (because rhob=a[0]*sigma1^b[0]+c[0])
 [a, b, c] = curve_fitting()
 UYS = a[2]*sigma1+b[2]                                                                                                  # UYS is the unconfined yield strength (pa)
 rhob =a[0]*sigma1**b[0]+c[0]                                                                                            # Bulk density as a function of MPS
-theta = 90 - np.arctan((Y[-2]-Y[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                            # angle of the outlet of the hopper from a vertical line
+theta = 90 - np.arctan((Y[-2]-Y[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
 H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference
 sigma = rhob[-1]*9.8*2*X[-1]/H                                                                                          # external stress: see eq. (2) of the reference
 D_arching = H * UYS[-1] / (rhob[-1]*9.8)                                                                                # arching diameter calculation based on Eq. (2) and Eq. (3)
@@ -67,6 +82,8 @@ print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " P
 print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
 print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
 print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
+print(F)
+print(P)
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
@@ -82,7 +99,7 @@ plt.ylabel("(m)",fontsize=16)
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
-plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active, fontsize=18)                                                            # liter to m3
+plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive, fontsize=18)                                                            # liter to m3
 plt.show()
 
 plt.plot(sigmav,z,'o')
