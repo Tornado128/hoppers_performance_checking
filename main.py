@@ -52,7 +52,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[z, sigmav, sigma1, F, P] = stress_profile(HEIGHT, RADIUS, X, Z)
+[z, sigmav, sigma1, F, P, theta, theta_critical] = stress_profile(HEIGHT, RADIUS, X, Z)
 if (F==1 and P==2):
     output_passive = "We have funnel flow with rathole in the passive state"
 if (F==1 and P==-2):
@@ -100,7 +100,9 @@ plt.ylabel("y-axis (m)",fontsize=16)
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
-plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive, fontsize=18)                                                            # liter to m3
+plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive \
+          +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %theta, \
+          fontsize=18)
 plt.show()
 
 plt.plot(sigmav,z,'o')
