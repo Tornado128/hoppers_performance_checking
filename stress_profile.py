@@ -54,7 +54,7 @@ def stress_profile(HEIGHT, RADIUS, X, Z):
     ##PHIE_out = PHIE[-1]                                                     # effective angle of internal friction at the outlet
     ##rhob_out = rhob[-1]
     # We want to determine if we are dealing with a mass flow or a funnel flow
-    [F, P] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigmav, sigma1, PHIE, rhob, WFA, UYS, sigmaf, N, number, RADIUS)
-    return z, sigmav, sigma1, F, P
+    [F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigmav, sigma1, PHIE, rhob, WFA, UYS, sigmaf, N, number, RADIUS)
+    return z, sigmav, sigma1, F, P, theta, theta_critical
 
 

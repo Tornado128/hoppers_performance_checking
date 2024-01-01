@@ -65,4 +65,4 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigmav, sigma1, PHIE, rhob, WFA, UYS,
             else:
                 P = -2                  # no rathole formation
 
-    return F, P
+    return F, P, theta, theta_critical

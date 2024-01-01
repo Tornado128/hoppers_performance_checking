@@ -85,6 +85,7 @@ print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " P
 print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
 print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
 print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
+print("The critical mass flow angle is " + str("{:.2f}".format(theta_critical)) + " while the hopper angle from the vertical is " + str("{:.2f}".format(theta)))
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
