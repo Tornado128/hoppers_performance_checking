@@ -1,15 +1,15 @@
 ## This function estimates the stress profile in the hopper in active (initial discharging and filling) mode
-def stress_profile(HEIGHT, RADIUS, X, Y):
+def stress_profile(HEIGHT, RADIUS, X, Z):
 
     import numpy as np
     from Janssen_Equation import Janssen_Equation
     from Motzkus_Equation import Motzkus_Equation
     from MassFlow_or_FunnelFlow import MassFlow_or_FunnelFlow
 
-    XX = [x for x, y in zip(X, Y) if y < HEIGHT]                            # We eliminate the x points above the powder level
-    YY = [y for y in Y if y < HEIGHT]                                       # We eliminate the y points above the powder level
+    XX = [x for x, z in zip(X, Z) if z < HEIGHT]                            # We eliminate the x points above the powder level
+    ZZ = [z for z in Z if z < HEIGHT]                                       # We eliminate the z points above the powder level
 
-    YY = [HEIGHT] + YY                                                      # Height of the powder in the hopper
+    ZZ = [HEIGHT] + ZZ                                                      # Height of the powder in the hopper
     XX = [RADIUS] + XX                                                      # x-location corresponds to the height of the powder in the hopper
 
     N = 10000                                                               # number of mesh in the vertical section
@@ -28,14 +28,14 @@ def stress_profile(HEIGHT, RADIUS, X, Y):
     for i in range(number):
         X1 = XX[i]
         X2 = XX[i + 1]
-        Y1 = YY[i]
-        Y2 = YY[i + 1]
+        Z1 = ZZ[i]
+        Z2 = ZZ[i + 1]
         for j in range(N):
-            z[numerator] = Y1 - (Y1 - Y2) * j / N
+            z[numerator] = Z1 - (Z1 - Z2) * j / N
             numerator = numerator + 1
         if (X1 / X2 == 1):                                                  # If the ratio of the points remains as 1, it means that we are dealing with a cylinderical part and we will use Janssen equation to estimate the consolidation stress vs height
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, WFA, PHIE, rhob, sigmaf_o, UYSf_o]=Janssen_Equation(X1,X2,Y1,Y2,N,sigmav_init, RADIUS)
+            [sigmav_o, sigma1_o, WFA, PHIE, rhob, sigmaf_o, UYSf_o]=Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS)
             #print(sigmav_o[-1])
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]
             sigma1[i*N:(i+1)*N] = sigma1_o[:N]
@@ -43,7 +43,7 @@ def stress_profile(HEIGHT, RADIUS, X, Y):
             UYS[i * N:(i + 1) * N] = UYSf_o[:N]
         else:                                                               # We are in the cone part of the hopper
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, WFA, PHIE, rhob, sigmaf_o, UYSf_o]=Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init, RADIUS)
+            [sigmav_o, sigma1_o, WFA, PHIE, rhob, sigmaf_o, UYSf_o]=Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS)
             #print(sigmav_o[-1])
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]
             sigma1[i*N:(i+1)*N] = sigma1_o[:N]
@@ -54,7 +54,7 @@ def stress_profile(HEIGHT, RADIUS, X, Y):
     ##PHIE_out = PHIE[-1]                                                     # effective angle of internal friction at the outlet
     ##rhob_out = rhob[-1]
     # We want to determine if we are dealing with a mass flow or a funnel flow
-    [F, P] = MassFlow_or_FunnelFlow(X1, X2, Y1, Y2, sigmav, sigma1, PHIE, rhob, WFA, UYS, sigmaf, N, number, RADIUS)
+    [F, P] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigmav, sigma1, PHIE, rhob, WFA, UYS, sigmaf, N, number, RADIUS)
     return z, sigmav, sigma1, F, P
 
 

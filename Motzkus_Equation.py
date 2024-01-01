@@ -6,13 +6,13 @@
 #(5) The reason for picking the numerical approach to solve Eq. (7) of the above referebce is that the parameters like
 #wall friction angle, bulk density, ... are changing in the vertical direction because of the increasing load
 
-def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
+def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
     import numpy as np
     from curve_fitting import curve_fitting
     import math
 
     # imaginary position of the apex of the cone (see Figure 4 of the reference)
-    Y_apex = ((Y2-Y1)/(X2-X1))*(0-X1)+Y1
+    Z_apex = ((Z2-Z1)/(X2-X1))*(0-X1)+Z1
 
     # gravity (m/s2)
     g = 9.8
@@ -23,8 +23,8 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
     [a, b, c] = curve_fitting()
 
 
-    theta = (np.pi/2 - np.arctan((Y2-Y1)/(X2-X1)))*180/np.pi                                                            # hopper vertical angle (degree)
-    delY = (Y1 - Y2) / N                                                                                                # increment size in z direction (m)
+    theta = (np.pi/2 - np.arctan((Z2-Z1)/(X2-X1)))*180/np.pi                                                            # hopper vertical angle (degree)
+    delZ = (Z1 - Z2) / N                                                                                                # increment size in z direction (m)
     sigmav = 0.1*np.ones(N)                                                                                             # vertical stress in the cone section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init                                                                                             # vertical stress (pa) at the top of the cone section of the hopper.
     sigma1 = 0.1 * np.ones(N)                                                                                           # major principal stress (sigma1) (pa)
@@ -73,7 +73,7 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
         # Eq. (8) of the reference
         n = 2 * (K * (1 + np.tan(math.radians(WFA[i])) / np.tan(math.radians(theta))) - 1)
 
-        sigmav_guess = (g * rhob[i] - n*sigmav[i]/((Y1-Y_apex-z_loc[i])))*delY + sigmav[i]                              # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
+        sigmav_guess = (g * rhob[i] - n*sigmav[i]/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]                              # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
         # while loop checks that error percent (between our initial guess and the estimation) is below 0.1%
@@ -83,10 +83,10 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
             UYS[i] = a[2] * sigmav_guess + b[2]
             PHILIN[i] = a[3] + sigmav_guess + b[3]
             WFA[i] = a[4] * sigmav_guess ** b[4] + c[4]
-            sigmav[i+1] = (g * rhob[i] - n*sigmav_guess/((Y1-Y_apex-z_loc[i])))*delY + sigmav[i]
+            sigmav[i+1] = (g * rhob[i] - n*sigmav_guess/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]
             error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
             sigmav_guess = sigmav[i+1]
-            z_loc[i + 1] = (i + 1) * delY
+            z_loc[i + 1] = (i + 1) * delZ
 
             j = j + 1
 
@@ -108,13 +108,6 @@ def Motzkus_Equation(X1,X2,Y1,Y2,N,sigmav_init,RADIUS):
         sigmaf_o[i] = rhob[i]*g*(2*RADIUS)/G
 
     sigmav[N-1] = sigmav[N-2]
-    z_loc[N-1] = (N-1) * delY
+    z_loc[N-1] = (N-1) * delZ
 
     return sigmav, sigma1, WFA, PHIE, rhob, sigmaf_o, UYS
-#print(sigmav[N])
-##plt.plot(sigmav, z_loc, 'b-')
-##plt.ylabel("distance from top of the cone to the apex (m)", fontsize=16)
-#plt.plot(sigmav,Y1-Y_apex-z_loc, 'b-')
-#plt.ylabel("distance from the apex of the cone (m)", fontsize=16)
-#plt.xlabel("vertical stress (pa)", fontsize=16)
-#plt.show()

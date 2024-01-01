@@ -40,19 +40,19 @@ if S == 1:
 # This function estimates the volume of the vessel
 # percent is the volume percent associated with each section of the hopper
 X = r[k-1].x                    # X values for the position of the vessel
-Y = r[k-1].y                    # Y values for the position of the vessel
-[volume, percent, vol] = vessel_volume(X, Y)
+Z = r[k-1].z                    # Z values (height) for the position of the vessel
+[volume, percent, vol] = vessel_volume(X, Z)
 
 # This function estimates the HEIGHT of the material in the hopper (m)
 # It also gives the radius (or x-location) associated with the height of the powder
-[HEIGHT, RADIUS] = height_position(X, Y, fill_percent)
+[HEIGHT, RADIUS] = height_position(X, Z, fill_percent)
 
 # Vertical stress by the powder in both active and passive mode
 # Passive state: F=1 is funnel flow and F=0 is mass flow in the passive state
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[z, sigmav, sigma1, F, P] = stress_profile(HEIGHT, RADIUS, X, Y)
+[z, sigmav, sigma1, F, P] = stress_profile(HEIGHT, RADIUS, X, Z)
 if (F==1 and P==2):
     output_passive = "We have funnel flow with rathole in the passive state"
 if (F==1 and P==-2):
@@ -69,7 +69,7 @@ if (F==0 and P==1):
 [a, b, c] = curve_fitting()
 UYS = a[2]*sigma1+b[2]                                                                                                  # UYS is the unconfined yield strength (pa)
 rhob =a[0]*sigma1**b[0]+c[0]                                                                                            # Bulk density as a function of MPS
-theta = 90 - np.arctan((Y[-2]-Y[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
+theta = 90 - np.arctan((Z[-2]-Z[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
 H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference
 sigma = rhob[-1]*9.8*2*X[-1]/H                                                                                          # external stress: see eq. (2) of the reference
 D_arching = H * UYS[-1] / (rhob[-1]*9.8)                                                                                # arching diameter calculation based on Eq. (2) and Eq. (3)
@@ -88,12 +88,12 @@ print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
-plt.plot(r[k-1].x, r[k-1].y,'b-')
-plt.plot([-x for x in r[k-1].x], r[k-1].y,'b-')
+plt.plot(r[k-1].x, r[k-1].z,'b-')
+plt.plot([-x for x in r[k-1].x], r[k-1].z,'b-')
 ## putting label of percent of filling
 for i in range(len(X) - 1):
-    plt.text(X[i],Y[i],'filling%: {}'.format(round(percent[i],1)),fontsize=16,color='g')
-    plt.axhline(Y[i], color='g', linestyle='--')
+    plt.text(X[i],Z[i],'filling%: {}'.format(round(percent[i],1)),fontsize=16,color='g')
+    plt.axhline(Z[i], color='g', linestyle='--')
 plt.axhline(HEIGHT, color='r', linestyle='--')
 plt.xlabel("x-axis (m)",fontsize=16)
 plt.ylabel("y-axis (m)",fontsize=16)

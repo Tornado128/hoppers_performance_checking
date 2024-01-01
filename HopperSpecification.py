@@ -1,9 +1,9 @@
-# This constructor defines several hoppers with their name, and their 2D sketch in the form of x and y.
+# This constructor defines several axisymmetric hoppers with their name, and their 2D sketch in the form of x and y.
 # All these hoppers are conical
 class ConicalHoppers:
-    def __init__(self, name, y, x):
+    def __init__(self, name, z, x):
         self.name = name
-        self.y = y
+        self.z = z
         self.x = x
 
 n = 6               # number of hoppers that we have information about them
