@@ -10,6 +10,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigmav, sigma1, PHIE, rhob, WFA, UYS,
         WFA[-1] = PHIE[-1]          #To avoid nan in the estimation of beta in the next line
     beta = (WFA[-1] + (180 / np.pi) * np.arcsin(np.sin(WFA[-1] * np.pi / 180) / np.sin(PHIE[-1] * np.pi / 180))) / 2
     theta_critical = 90 - 0.5 * (180 / np.pi) * np.arccos((1 - np.sin(PHIE[-1] * np.pi / 180)) / (2 * np.sin(PHIE[-1] * np.pi / 180))) - beta
+    #print(PHIE[-1], WFA[-1], beta)
 
     ## angle of the outlet of the hopper from a vertical line
     # (I added 0.000000000000001 to the denominator to avoid having the denominator equal to zero)
