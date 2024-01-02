@@ -1,10 +1,11 @@
-#(1) Motzkus equation is used to obtain the vertical stress distribution (sigmav) and then major principal stress (sigma1) in the cone part(s) of the hopper.
-#(2) The equations in this function are mostly obtain from "A proposed complete methodology to predict gravity flow obstruction
-# of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
-#(3) We implemented implicit Euler method to solve Motzkus equation (Eq. (7) of of the above reference) numerically
-#(4) Implicit methods are always stable although they are often slower in coverging compared to explicit methods
-#(5) The reason for picking the numerical approach to solve Eq. (7) of the above referebce is that the parameters like
-#wall friction angle, bulk density, ... are changing in the vertical direction because of the increasing load
+##(1) Motzkus equation is used to obtain the vertical stress distribution (sigmav) and then major principal stress (sigma1) in the cone part(s) of the hopper.
+##(2) The equations in this function are mostly obtain from "A proposed complete methodology to predict gravity flow obstruction
+# of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475. However, some equations
+# are also obtained from "Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503"
+##(3) We implemented implicit Euler method to solve Motzkus equation (Eq. (7) of of the above reference) numerically
+##(4) Implicit methods are always stable although they are often slower in coverging compared to explicit methods
+##(5) The reason for picking the numerical approach to solve Eq. (7) of the above referebce is that the parameters like
+##wall friction angle, bulk density, ... are changing in the vertical direction because of the increasing load
 
 def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
     import numpy as np
@@ -53,25 +54,37 @@ def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
         if (WFA[i]>PHIE[i]):
             WFA[i] = PHIE[i]                            # Wall friction angle may be unphysically larger than effective angle of internal friction at very low stresses (close to the top of the powder)
 
-        # Eq. (12) of the reference
+        ## Eq. (12) of Leung et al "A proposed complete methodology to predict gravity flow obstruction
+        # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
         lambda_if = (1 - np.sin(math.radians(WFA[i])) ** 2.0 - np.sqrt(
             (1 - np.sin(math.radians(WFA[i])) ** 2) * (np.sin(math.radians(PHIE[i])) ** 2 - np.sin(math.radians(WFA[i])) ** 2))) / (
                             1 + np.sin(math.radians(WFA[i])) ** 2.0 + np.sqrt((1 - np.sin(math.radians(WFA[i])) ** 2) * (
                             np.sin(math.radians(PHIE[i])) ** 2 - np.sin(math.radians(WFA[i])) ** 2)))
 
-        # Eq. (15) of the reference
+        ## Eq. (15) of Leung et al "A proposed complete methodology to predict gravity flow obstruction
+        # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
         lambda_f = (np.tan(math.radians(90 - theta)) - np.tan(math.radians(WFA[i])) - lambda_if * np.tan(math.radians(WFA[i])) * (1 + np.tan(math.radians(WFA[i])) ** 2.0 -(np.tan(math.radians(90 - theta)) - np.tan(math.radians(WFA[i]))) ** 2)) / (np.tan(math.radians(90 - theta)) * (1 + np.tan(math.radians(WFA[i])) * np.tan(math.radians(90 - theta))))
-        mu_f = (lambda_if / lambda_f) * np.tan(math.radians(WFA[i]))
 
-        if (theta > 90 - math.degrees(np.arcsin(np.sin(math.radians(WFA[i])) / np.sin(math.radians(PHIE[i]))))):
+        ## see Eq. (21) and Eq. (23) of Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
+        mu_if = np.tan(math.radians(WFA[i]))
+        mu_f = mu_if * lambda_if/lambda_f
+
+        if (theta > 90 - math.degrees(np.arcsin(np.sin(math.radians(WFA[i])) / np.sin(math.radians(PHIE[i]))))):        # material failure
             # Eq. (11) of the reference
             K = 0.5 * (1 + lambda_if) - 0.5 * (1 - lambda_if) * np.cos(2 * math.radians(theta)) + lambda_if * np.tan(math.radians(WFA[i])) * np.sin(2 * math.radians(theta))
-        else:
+
+            # Eq. (19) in Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
+            n = 2 * mu_if * lambda_if * np.tan(math.radians(90 - theta))
+        else:                                                                                                           # wall failure
             # Eq. (14) of the reference
             K = 0.5 * (1 + lambda_f) - 0.5 * (1 - lambda_f) * np.cos(2 * math.radians(theta)) + mu_f * lambda_f * np.sin(2 * math.radians(theta))
 
-        # Eq. (8) of the reference
-        n = 2 * (K * (1 + np.tan(math.radians(WFA[i])) / np.tan(math.radians(theta))) - 1)
+            # Eq. (17) in Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
+            n = 2 * mu_f * lambda_f * np.tan(math.radians(90 - theta))
+
+        ## Eq. (8) of the reference
+        ##mu_f = (lambda_if / lambda_f) * np.tan(math.radians(WFA[i]))
+        ##n = 2 * (K * (1 + np.tan(math.radians(WFA[i])) / np.tan(math.radians(theta))) - 1)
 
         sigmav_guess = (g * rhob[i] - n*sigmav[i]/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]                              # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
         j = 0                                                                                                           # numerator for the while loop
@@ -90,10 +103,12 @@ def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
 
             j = j + 1
 
-        # It is the same as Eq. (14) of the reference
+        # It is the same as Eq. (14) of Leung et al "A proposed complete methodology to predict gravity flow obstruction
+        # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
         K_for_MPS_calculation = 0.5 * (1 + lambda_f) - 0.5 * (1 - lambda_f) * np.cos(2 * math.radians(theta)) + mu_f * lambda_f * np.sin(2 * math.radians(theta))
 
-        # Eq. (18) of the reference
+        # Eq. (18) of the reference Leung et al "A proposed complete methodology to predict gravity flow obstruction
+        # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
         beta_p = math.degrees(np.arctan(((1 + np.cos(2 * math.radians(theta))) * np.tan(math.radians(WFA[i]))) / (1 + np.sin(2 * math.radians(theta)) * np.tan(math.radians(WFA[i])) - 1 / K_for_MPS_calculation)))
 
         # # major principal stress at the outlet of the hopper (Pa): Eq. (17) of the appendix in the reference
@@ -104,7 +119,9 @@ def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
 
         # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
         PHILIN_p = a[3]*sigma1[i]+b[3]
-        G = -5.066 + 0.490*PHILIN_p-0.0112*PHILIN_p**2+0.000108*PHILIN_p**3                                ## Eq. (23) of the reference (used only for the funnel flow case)
+        G = -5.066 + 0.490*PHILIN_p-0.0112*PHILIN_p**2+0.000108*PHILIN_p**3                                ## Eq. (23) of Leung et al "A proposed complete methodology to predict gravity flow obstruction
+                                                                                                            # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
+                                                                                                            # (Used only for the funnel flow case)
         sigmaf_o[i] = rhob[i]*g*(2*RADIUS)/G
 
     sigmav[N-1] = sigmav[N-2]
