@@ -1,7 +1,7 @@
 # (1) We implemented implicit Euler method to solve Janssen equation numerically in the cylinderical part of the hopper.
 # (2) This function gives us vertical stress distribution (sigmav) and major principal stress (sigma1) in the cylinderical
 # sections of the hoppers
-# (3) The details for Janssen equation is given in "Schulze, Dietmar, and Dietmar Schulze. "Flow properties of bulk solids." Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
+# (3) The details for Janssen equation is given in "Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
 # (4) Implicit methods are always stable although they are often slower in covergence compared to explicit methods
 def Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
     import numpy as np
@@ -38,7 +38,9 @@ def Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
         WFA[i] = a[4]*sigmav[i] ** b[4] + c[4]
         if (WFA[i]>85):
             WFA[i] = 85                                                                                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
-        sigmav_guess = (g * rhob[i] - (4 * K / D) * np.tan(WFA[i] * np.pi / 180) * sigmav[i]) * delZ + sigmav[i]        # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
+
+        sigmav_guess = (g * rhob[i] - (4 * K / D) * np.tan(WFA[i] * np.pi / 180) * sigmav[i]) * delZ + sigmav[i]        # See Eq. (9.7) in Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021)
+                                                                                                                        # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
         # while loop checks that error percent (between our initial guess and the estimation) is below 0.1%
@@ -57,7 +59,7 @@ def Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
 
         # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
         PHILIN_p = a[3] * sigma1[i] + b[3]
-        G = -5.066 + 0.490 * PHILIN_p - 0.0112 * PHILIN_p ** 2 + 0.000108 * PHILIN_p ** 3  ## Eq. (23) of the reference (used only for the funnel flow case)
+        G = -5.066 + 0.490 * PHILIN_p - 0.0112 * PHILIN_p ** 2 + 0.000108 * PHILIN_p ** 3  ## Eq. (23) of the Leung et al paper (used only for the funnel flow case)
         sigmaf_o[i] = rhob[i] * g * (2 * RADIUS) / G
 
     sigmav[N-1] = sigmav[N-1]
