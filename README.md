@@ -3,7 +3,7 @@ powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1
 The prediction of initial stresses in hoppers, Bulk Solids Handling, 1994, 14, 497-503" are also used. 
 -----
 (2) Remember that Jenike method is very conservative for the estimation of arch diameter. It is even more conservative
-for the prediction of rathole diameter! If Jenike method says that a system doesn't rathole, it will definitely will NOT rathole!
+for the prediction of rathole diameter! If Jenike method says that a system doesn't rathole, it will definitely NOT rathole!
 -----
 (3) If the hopper outlet is not fully activated (as in most tablet presses), Jenike method is even not directionally correct!!
 -----
