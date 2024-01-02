@@ -1,7 +1,7 @@
 ##(1) Motzkus equation is used to obtain the vertical stress distribution (sigmav) and then major principal stress (sigma1) in the cone part(s) of the hopper.
 ##(2) The equations in this function are mostly obtain from "A proposed complete methodology to predict gravity flow obstruction
 # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475. However, some equations
-# are also obtained from "Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503"
+# are also obtained from "Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Handling, 1994, 14, 497-503"
 ##(3) We implemented implicit Euler method to solve Motzkus equation (Eq. (7) of of the above reference) numerically
 ##(4) Implicit methods are always stable although they are often slower in coverging compared to explicit methods
 ##(5) The reason for picking the numerical approach to solve Eq. (7) of the above referebce is that the parameters like
