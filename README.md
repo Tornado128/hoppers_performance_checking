@@ -1,6 +1,6 @@
 (1) The code is based on the methodology developed by Leung et al, "A proposed complete methodology to predict gravity flow obstruction of pharmaceutical 
 powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475. However, some of the equations in "Dietmar Schulze, 
-The prediction of initial stresses in hoppers, Bulk Solids Hand;img, 1994, 14, 497-503" are also used. 
+The prediction of initial stresses in hoppers, Bulk Solids Handling, 1994, 14, 497-503" are also used. 
 -----
 (2) Remember that Jenike method is very conservative for the estimation of arch diameter. It is even more conservative
 for the prediction of rathole diameter! If Jenike method says that a system doesn't rathole, it will definitely will NOT rathole!
