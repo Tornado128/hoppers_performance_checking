@@ -39,8 +39,8 @@ def curve_fitting():
 
 	## Power objective function for WFA (the intercept is defined as 90 degrees because we expect that wall friction angle approaches 90 degrees at low sigma)
 	def objective_power_wall(x, a, b):
-		return a * x ** b + 90
-
+		return a * x**b + 90
+	#
 
 	popt, _ = curve_fit(objective_power, sigma1, rhob, maxfev=5000)     ## curve fitting for rhob vs sigma1 (power equation)
 	a[0], b[0], c[0] = popt                                             ## summarize the parameter values
@@ -50,10 +50,11 @@ def curve_fitting():
 	a[2], b[2] = popt                                                   ## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, PHILIN)               ## curve fitting for PHILIN vs sigma1 (linear equation)
 	a[3], b[3] = popt                                                   ## summarize the parameter values
-	popt, _ = curve_fit(objective_power_wall, SIGMA, WFA)               ## curve fitting for WFA vs SIGMA (power equation)
+	popt, _ = curve_fit(objective_power_wall, SIGMA, WFA, maxfev=5000)    ## curve fitting for WFA vs SIGMA (power equation)
 	a[4], b[4] = popt                                                   ## summarize the parameter values
 	c[4] = 90
 	return (a, b, c)													## returning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
+
 '''
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
