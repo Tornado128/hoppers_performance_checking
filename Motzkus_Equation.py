@@ -7,7 +7,7 @@
 ##(5) The reason for picking the numerical approach to solve Eq. (7) of the above referebce is that the parameters like
 ##wall friction angle, bulk density, ... are changing in the vertical direction because of the increasing load
 
-def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
+def Motzkus_Equation(KK, X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
     import numpy as np
     from curve_fitting import curve_fitting
     import math
@@ -49,8 +49,6 @@ def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
         if (WFA[i] > 85):
             WFA[i] = 85                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
 
-        # Evaluation of K
-        # Eq. (12) of the reference
         if (WFA[i]>PHIE[i]):
             WFA[i] = PHIE[i]                            # Wall friction angle may be unphysically larger than effective angle of internal friction at very low stresses (close to the top of the powder)
 
@@ -65,26 +63,26 @@ def Motzkus_Equation(X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
         # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
         lambda_f = (np.tan(math.radians(90 - theta)) - np.tan(math.radians(WFA[i])) - lambda_if * np.tan(math.radians(WFA[i])) * (1 + np.tan(math.radians(WFA[i])) ** 2.0 -(np.tan(math.radians(90 - theta)) - np.tan(math.radians(WFA[i]))) ** 2)) / (np.tan(math.radians(90 - theta)) * (1 + np.tan(math.radians(WFA[i])) * np.tan(math.radians(90 - theta))))
 
-        ## see Eq. (21) and Eq. (23) of Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
+
+        #lambda_f = (np.tan(math.radians(90 - theta)) - mu_if) - lambda_if * np.tan(math.radians(WFA[i])) * (1 + np.tan(math.radians(WFA[i])) ** 2.0 -(np.tan(math.radians(90 - theta)) - np.tan(math.radians(WFA[i]))) ** 2)) / (np.tan(math.radians(90 - theta)) * (1 + np.tan(math.radians(WFA[i])) * np.tan(math.radians(90 - theta))))
+        ## see Eq. (23) and Eq. (21) of Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
         mu_if = np.tan(math.radians(WFA[i]))
         mu_f = mu_if * lambda_if/lambda_f
 
         if (theta > 90 - math.degrees(np.arcsin(np.sin(math.radians(WFA[i])) / np.sin(math.radians(PHIE[i]))))):        # material failure
-            # Eq. (11) of the reference
-            K = 0.5 * (1 + lambda_if) - 0.5 * (1 - lambda_if) * np.cos(2 * math.radians(theta)) + lambda_if * np.tan(math.radians(WFA[i])) * np.sin(2 * math.radians(theta))
+            # Eq. (18) in Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Handling, 1994, 14, 497-503
+            K = 0.5 * (1 + lambda_if) - 0.5 * (1 - lambda_if) * np.cos(2 * math.radians(theta)) + mu_if*lambda_if *np.sin(2*math.radians(theta))
 
             # Eq. (19) in Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
             n = 2 * mu_if * lambda_if * np.tan(math.radians(90 - theta))
+
         else:                                                                                                           # wall failure
-            # Eq. (14) of the reference
-            K = 0.5 * (1 + lambda_f) - 0.5 * (1 - lambda_f) * np.cos(2 * math.radians(theta)) + mu_f * lambda_f * np.sin(2 * math.radians(theta))
+
+            # Eq. (16) in Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Handling, 1994, 14, 497-503
+            K = 0.5 * (1 + lambda_f) - 0.5 * (1 - lambda_f) * np.cos(2 * math.radians(theta)) + mu_f * lambda_f * np.sin(2*math.radians(theta))
 
             # Eq. (17) in Dietmar Schulze, "The prediction of initial stresses in hoppers", Bulk Solids Hand;img, 1994, 14, 497-503
             n = 2 * mu_f * lambda_f * np.tan(math.radians(90 - theta))
-
-        ## Eq. (8) of the reference
-        ##mu_f = (lambda_if / lambda_f) * np.tan(math.radians(WFA[i]))
-        ##n = 2 * (K * (1 + np.tan(math.radians(WFA[i])) / np.tan(math.radians(theta))) - 1)
 
         sigmav_guess = (g * rhob[i] - n*sigmav[i]/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]                              # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
         j = 0                                                                                                           # numerator for the while loop

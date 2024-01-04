@@ -3,13 +3,12 @@
 # sections of the hoppers
 # (3) The details for Janssen equation is given in "Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
 # (4) Implicit methods are always stable although they are often slower in covergence compared to explicit methods
-def Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
+def Janssen_Equation(KK, X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
     import numpy as np
     from curve_fitting import curve_fitting                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
 
     D = 2*X1                                                                            # diameter of this section of the hopper
     g = 9.8                                                                             # gravity (m/s2)
-    K = 0.4                                                                             # horizontal stress to vertical stress ratio (it is typically between 0.3 to 0.6 in hoppers and silos)
 
     #This function fits bulk density, effective angle of internal
     # friction, FC and FFC vs sigma1. It also does a power fit for WFA vs normal stress
@@ -39,7 +38,7 @@ def Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
         if (WFA[i]>85):
             WFA[i] = 85                                                                                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
 
-        sigmav_guess = (g * rhob[i] - (4 * K / D) * np.tan(WFA[i] * np.pi / 180) * sigmav[i]) * delZ + sigmav[i]        # See Eq. (9.7) in Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021)
+        sigmav_guess = (g * rhob[i] - (4 * KK / D) * np.tan(WFA[i] * np.pi / 180) * sigmav[i]) * delZ + sigmav[i]        # See Eq. (9.7) in Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021)
                                                                                                                         # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
@@ -50,7 +49,7 @@ def Janssen_Equation(X1,X2,Z1,Z2,N,sigmav_init, RADIUS):
             UYS[i] = a[2] * sigmav_guess + b[2]
             PHILIN[i] = a[3] + sigmav_guess + b[3]
             WFA[i] = a[4] * sigmav_guess ** b[4] + c[4]
-            sigmav[i+1] = (g * rhob[i] - (4 * K / D) * np.tan(WFA[i] * np.pi / 180) * sigmav_guess) * delZ + sigmav[i]
+            sigmav[i+1] = (g * rhob[i] - (4 * KK / D) * np.tan(WFA[i] * np.pi / 180) * sigmav_guess) * delZ + sigmav[i]
             error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
             sigmav_guess = sigmav[i+1]
             z_loc[i + 1] = (i + 1) * delZ

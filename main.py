@@ -7,6 +7,7 @@
 ## (5) If there is a funnel flow regime in the given hopper, the code determines if a rathole forms in the hopper
 ## Note: Remember that Jenike method is very conservative for the estimation of arch diameter. It is even more conservative
 ## for the prediction of rathole diameter
+import math
 
 import matplotlib.pyplot as plt
 import sys
@@ -17,7 +18,9 @@ from vessel_volume import *                                                     
 from height_position import *                                                                                           #This function estimates the height ("HEIGHT") of the powder in the hopper. It also gives the radius (RADIUS) corresponds to the height of the powder in the hopper
 from stress_profile import *                                                                                            #This function estimates the stress profile in both active and passive modes
 from curve_fitting import *                                                                                             #This function does linear and power curve fitting on effective angle of internal friction, bulk density,
-                                                                                                                        #linearized angle of internal friction, wall friction angle and UYS vs MPS.
+
+KK = 0.4                                                                                                                #Horizontal stress to vertical stress, which is typically equal to 0.3 to 0.6 for powders
+print("I am assuming the horizontal to vertical stress ratio is equal to ", KK)
 
 print('Choose one of the following systems by their number!')
 print('1. 1000L_IBC')
@@ -52,7 +55,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[z, sigmav, sigma1, F, P, theta, theta_critical] = stress_profile(HEIGHT, RADIUS, X, Z)
+[z, sigmav, sigma1, F, P, theta, theta_critical] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 if (F==1 and P==2):
     output_passive = "We have funnel flow with rathole in the passive state"
 if (F==1 and P==-2):
@@ -69,6 +72,7 @@ if (F==0 and P==1):
 [a, b, c] = curve_fitting()
 UYS = a[2]*sigma1+b[2]                                                                                                  # UYS is the unconfined yield strength (pa)
 rhob =a[0]*sigma1**b[0]+c[0]                                                                                            # Bulk density as a function of MPS
+WFA = a[4]*sigma1**b[4]+c[4]
 theta = 90 - np.arctan((Z[-2]-Z[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
 H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference
 sigma = rhob[-1]*9.8*2*X[-1]/H                                                                                          # external stress: see eq. (2) of the reference
@@ -106,20 +110,21 @@ plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\
           fontsize=18)
 plt.show()
 
-plt.plot(sigmav,z,'o')
-plt.xlabel("vertical stress (pa)",fontsize=22)
-plt.ylabel("height (m)",fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.show()
 
-plt.plot(sigma1,z,'o')
-plt.plot(UYS,z,'o')
-plt.xlabel("major principal stress (pa) or unconfined yield strength (pa)",fontsize=22)
+#estimation of vertical wall stress
+sigmaw = np.zeros(len(WFA))
+j = 0
+for i in WFA:
+    sigmaw[j] = KK * np.tan(math.radians(WFA[j]-0.001)) * sigmav[j]
+    j = j + 1
+
+plt.plot(sigma1,z,'g--',UYS,z,'m--',sigmav,z,'b--', sigmaw, z, 'r--', linewidth=2)
+plt.plot()
+plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)
 plt.yticks(fontsize=22)
-plt.legend(["major principal stress", "unconfined yield strength"], fontsize=22)
+plt.legend(["major principal stress", "unconfined yield strength", "vertical load", "wall stress"], fontsize=22)
 plt.title("%s" %output_active, fontsize=18)
 plt.show()
 
