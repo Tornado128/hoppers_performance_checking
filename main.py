@@ -78,7 +78,7 @@ print("2. "+output_passive)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
 # UYS = a[2]*sigma1+b[2]), a[0] and b[0] (because rhob=a[0]*sigma1^b[0]+c[0])
 
-[a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
+[a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
 rhob_active_outlet =a[0]*sigma1_active[-1]**b[0]+c[0]                                                                   # Bulk density as a function of MPS in the active mode
 rhob_passive_outlet = a[0]*sigma1_passive[-1]**b[0]+c[0]                                                                # Bulk density as a function of MPS in the passive mode
 WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
@@ -88,19 +88,35 @@ D_arching_active = H * UYS_active[-1] / (rhob_active_outlet*9.8)                
 D_arching_active = D_arching_active * 1000                                                                              # arching diameter (mm) in the active mode
 D_arching_passive = H * UYS_passive[-1] / (rhob_passive_outlet*9.8)                                                     # arching diameter (m) in the passive mode: calculation based on Eq. (2) and Eq. (3)
 D_arching_passive = D_arching_passive * 1000                                                                            # arching diameter (mm) in the passive mode
-print("3. The outlet diameter is ", round(2*X[-1]*1000), " mm")
-print("4. The vertical load at the outlet of the hopper is ", round(sigmav[-1]), " Pa")
-print("5. Bulk density at the outlet in the active state is ", round(rhob_active_outlet), " kg/m3")
-print("6. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet), " kg/m3")
-print("7. Critical mass flow angle is ", round(theta_critical), " degrees")
-print("8. Arching diameter for the active state is ", round(D_arching_active), " mm")
-print("9. Arching diameter for the passive state is ", round(D_arching_passive), " mm")
-print("10. Rathole diameter is (for passive state) ", round(1000*RH_diameter), " mm")
+print("3. The outlet diameter is ", round(2*X[-1]*1000,1), " mm")
+print("4. The vertical load at the outlet of the hopper is ", round(sigmav[-1],1), " Pa")
+print("5. Bulk density at the outlet in the active state is ", round(rhob_active_outlet,1), " kg/m3")
+print("6. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet,1), " kg/m3")
+print("7. Critical mass flow angle is ", round(theta_critical,1), " degrees")
+print("8. Arching diameter for the active state is ", round(D_arching_active,1), " mm")
+print("9. Arching diameter for the passive state is ", round(D_arching_passive,1), " mm")
+print("10. Rathole diameter is (for passive state) ", round(1000*RH_diameter,1), " mm")
 
+## showing the dimensions of the hopper
+percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
+plt.plot(r[k-1].x, r[k-1].z,'b-')
+plt.plot([-x for x in r[k-1].x], r[k-1].z,'b-')
+## putting label of percent of filling
+for i in range(len(X) - 1):
+    plt.text(X[i],Z[i],'filling%: {}'.format(round(percent[i],1)),fontsize=16,color='g')
+    plt.axhline(Z[i], color='g', linestyle='--')
+plt.axhline(HEIGHT, color='r', linestyle='--')
+plt.xlabel("x-axis (m)",fontsize=16)
+plt.ylabel("y-axis (m)",fontsize=16)
+plt.xticks(fontsize=16)
+plt.yticks(fontsize=16)
+volume_liter = round(1000*volume,2)                                             # m3 to liter
+plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive \
+          +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %theta, \
+          fontsize=18)
+plt.show()
 
-
-
-plt.plot(sigma1_active,z,'g--',sigma1_passive,z,'m--',sigmav,z,'b--', UYS_active, z, 'r--', linewidth=2)
+plt.plot(sigma1_active,z,'go',sigma1_passive,z,'m*',sigmav,z,'v-', UYS_active, z, '2r', linewidth=2)
 plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)

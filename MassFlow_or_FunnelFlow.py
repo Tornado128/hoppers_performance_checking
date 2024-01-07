@@ -4,7 +4,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     import numpy as np
     from curve_fitting import curve_fitting
 
-    [a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
 
     theta = (np.pi / 2 - np.arctan((Z2 - Z1) / (X2 - X1+ 0.0000000001))) * 180 / np.pi                                  # hopper angle form vertical (degree)
     rhob_active_outlet = a[0] * sigma1_active[-1] ** b[0] + c[0]                                                        # bulk density at the outlet of the hopper in the active mode (Pa)
@@ -55,11 +55,11 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     # in the hopper
     a = a[2]
     b = b[2]
-    UYS_passive = np.zeros(number*N)
+    UYS_active = np.zeros(number*N)
     if (F == 1):
         for i in range(number*N):
-            UYS_passive[i] = a * sigma1_passive[i] + b
-            if (sigmaf[i]<UYS_passive[i]):
+            UYS_active[i] = a * sigma1_active[i] + b
+            if (sigmaf[i]<UYS_active[i]):
                 P = 2                   #rathole formation
                 break
             else:

@@ -13,7 +13,7 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
     #This function fits bulk density, effective angle of internal
     # friction, FC and FFC vs sigma1. It also does a power fit for WFA vs normal stress
     # a, b and c are the coefficients for power and linear curve fittings.
-    [a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
 
     delZ = (Z1 - Z2)/N                                                  # increment size in z direction (m)
     sigmav=sigmav_init*np.ones(N)                                       # vertical load in the vertical section of the hopper (pa) (it varies with z)
@@ -30,15 +30,15 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
     for i in range(N):
 
         ## parameters for the Janssen equation: parameters needed to estimate an initial guess for sigmav for implementation of implicit Euler method
-        rhob[i] = a[0]*sigmav[i]**b[0]+c[0]
-        PHIE[i] = a[1] * sigmav[i] + b[1]
-        UYS[i] = a[2]*sigmav[i] + b[2]
-        PHILIN[i] = a[3]*sigmav[i] + b[3]
-        WFA[i] = a[4]*(sigmav[i]*KK) ** b[4] + c[4]
+        rhob[i] = average_rhob
+        PHIE[i] = average_PHIE
+        WFA[i] = average_WFA
+        #UYS[i] = a[2]*sigmav[i] + b[2]
+        #PHILIN[i] = a[3]*sigmav[i] + b[3]
         if (WFA[i]>85):
             WFA[i] = 85                                                                                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
 
-        sigmav_guess = (g * rhob[i] - (4 * KK / D) * np.tan(WFA[i] * np.pi / 180) * sigmav[i]) * delZ + sigmav[i]        # See Eq. (9.7) in Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021)
+        sigmav_guess = (g * rhob[i] - (4 * KK / D) * np.tan(WFA[i] * np.pi / 180) * sigmav[i]) * delZ + sigmav[i]       # See Eq. (9.7) in Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021)
                                                                                                                         # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence

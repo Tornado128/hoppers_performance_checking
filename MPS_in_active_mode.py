@@ -22,15 +22,16 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     #"curve_fitting" function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1.
     #It also does a power fit for wall friction angle vs normal stress
     #a, b and c are the coefficients for power and linear curve fittings.
-    [a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
 
 
     theta = (np.pi/2 - np.arctan((Z2-Z1)/(X2-X1)))*180/np.pi                                                            # hopper vertical angle (degree)
     delZ = (Z1 - Z2) / N                                                                                                # increment size in z direction (m)
-    sigmav = 0.1*np.ones(N)                                                                                             # vertical stress in the cone section of the hopper (pa) (it varies with z)
+    sigmav = sigmav_init*np.ones(N)                                                                                     # vertical stress in the cone section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init                                                                                             # vertical stress (pa) at the top of the cone section of the hopper.
     sigma1_active = 0.1 * np.ones(N)                                                                                    # major principal stress (sigma1) in the active mode (Pa)
     z_loc = np.zeros(N)                                                                                                 # increments in the vertical direction (m)
+    sigmaf_o = 0.1 * np.ones(N)                                                                                         # stress in the to have rathole (only for the case of funnel flow: Eq. (23) of the reference)
 
     rhob = np.zeros(N)                                                                                                  # bulk density (kg/m3)
     PHIE = np.zeros(N)                                                                                                  # effective angle of internal friction (degree)
@@ -38,6 +39,10 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     PHILIN = np.zeros(N)                                                                                                # linearized angle of internal friction (degree)
     WFA = np.zeros(N)                                                                                                   # wall friction angle (degree)
     for i in range(N):
+
+        ## B is the diameter of the cone at this specific element
+        B = X1 - i*(X1-X2)/N
+        B = 2.0 * B
 
         # parameters for the Motzkus equation: parameters needed to estimate an initial guess for sigmav for
         # implementation of implicit Euler method
@@ -117,7 +122,13 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
         if sigma1_active[i]<0:
             sigma1_active[i] = None
 
+        ## These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
+        PHILIN_p = a[3]*sigma1_active[i]+b[3]
+        G = -6.86712 + 0.58911*PHILIN_p-0.012966*PHILIN_p**2.0+0.00011939*PHILIN_p**3.0                                 ## Jenike Bulletin 123 P67: (Used only for the funnel flow case)
+        sigmaf_o[i] = rhob[i]*g*(B)/G
+
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delZ
+    RH_diameter = G * UYS[-1] / (rhob[-1]*g)                                                                            # Rathole diameter (m)
 
-    return sigmav, sigma1_active, UYS
+    return sigmav, sigma1_active, UYS, sigmaf_o, RH_diameter

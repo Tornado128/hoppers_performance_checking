@@ -23,11 +23,10 @@ def curve_fitting():
 
 	WFA = np.arctan(TAU/SIGMA)*180/np.pi	# wall friction angle (degree)
 
-	## maximum and average wall friction angle and average angle of effective wall friction angle
-	max_WFA = np.max(WFA)
-	max_PHIE = np.max(PHIE)
+	## Average wall friction angle and average angle of effective wall friction angle
 	average_WFA = np.average(WFA)
 	average_PHIE = np.average(PHIE)
+	average_rhob = np.average(rhob)
 
 	## defining arrays of zero. a, b and c are the fitting coefficients for linear and powder curve fittings.
 	## The goal of fitting is to have a continuous function for FC, FFC, rhob, PHIE and PHILIN as a function of sigma1 (major principal stress)
@@ -62,7 +61,7 @@ def curve_fitting():
 	popt, _ = curve_fit(objective_linear, SIGMA, TAU)  					## curve fitting for shear stress vs normal stress in the wall friction data
 	a[5], b[5] = popt
 
-	return (a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA)													## returning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
+	return (a, b, c, average_rhob, average_PHIE, average_WFA)													## returning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
 
 '''
 import matplotlib.pyplot as plt
