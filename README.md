@@ -5,11 +5,10 @@ The prediction of initial stresses in hoppers, Bulk Solids Handling, 1994, 14, 4
 (2) The vertical stress profile predicted by the code matches with the predictions by Dietmar online software: https://dietmar-schulze.de/sstool_e.html
 -----
 (3) Remember that Jenike method is very conservative for the estimation of arch diameter. It is even more conservative
-for the prediction of rathole diameter! If Jenike method says that a system doesn't rathole, it will definitely NOT rathole!
+for the prediction of rathole diameter! As a rule of thumb, if Jenike method says that a system doesn't rathole, it will definitely NOT rathole! 
 -----
-(4) If the hopper outlet is not fully activated (as in most tablet presses), Jenike method is even not directionally correct!!
+(4) If the hopper outlet is not fully activated (as in most tablet presses), Jenike method is even not directionally correct!! The effective angle of internal friction is more predictive of ratholing in such scenarios. There are some observations claiming that average angle of friction higher than 46 degree cause ratholing.
 -----
 (5) The purpose of this code is to evaluate the risks involved in gravity-driven flow of pharmaceutical powders in EXISTING hoppers, including mass flow/funnel 
 pattern, arch formation under active stress (filling, initial discharging) and passive state (emptying) and rathole formation.
 -----
-
