@@ -43,7 +43,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## Janssen equation is valid for both active and passive modes to obtain MPS, vertical stress and UYS
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS)
+            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                       # MPS
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                      # MPS for the passive mode which is equal to active mode for the Janssen equation

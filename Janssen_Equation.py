@@ -3,7 +3,7 @@
 # sections of the hoppers
 # (3) The details for Janssen equation is given in "Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
 # (4) Implicit methods are always stable although they are often slower in covergence compared to explicit methods
-def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
+def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
     import numpy as np
     from curve_fitting import curve_fitting                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
 
@@ -28,6 +28,10 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
     PHILIN=np.zeros(N)                                                  # linearized angle of internal friction
     WFA = np.zeros(N)                                                   # wall friction angle
     for i in range(N):
+
+        ## B is the diameter of the cone at this specific element
+        B = X1 - i*(X1-X2)/N
+        B = 2.0 * B
 
         ## parameters for the Janssen equation: parameters needed to estimate an initial guess for sigmav for implementation of implicit Euler method
         rhob[i] = average_rhob
@@ -56,6 +60,11 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
 
             j = j + 1
 
+    sigmav[N-1] = sigmav[N-1]
+    z_loc[N-1] = (N-1) * delZ
+    sigma1[:N] = sigmav[:N]                                                                                             #For cylinderical part of a hopper, major principal stress (sigma1) is equal to the vertical stress
+
+    for i in range(N):
         # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state if the outlet section is vertical (like in Piccola)
         PHILIN_p = a[3] * sigma1[i] + b[3]
         # Jenike Bulletin 123 P67
@@ -64,11 +73,7 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
 
         # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
         # Some hoppers like Piccola have cylinderical outlets. That is why we put RADIUS of the outlet here
-        sigmaf_o[i] = rhob[i] * g * (2 * RADIUS) / G
-
-    sigmav[N-1] = sigmav[N-1]
-    z_loc[N-1] = (N-1) * delZ
-    sigma1[:N] = sigmav[:N]                                                                                             #For cylinderical part of a hopper, major principal stress (sigma1) is equal to the vertical stress
+        sigmaf_o[i] = rhob[i] * g * B / G
 
     sigma1[0] = sigma1[1]
     rhob[0] = rhob[1]

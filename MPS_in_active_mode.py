@@ -122,10 +122,11 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
         if sigma1_active[i]<0:
             sigma1_active[i] = None
 
+    for i in range(N):
         ## These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
         PHILIN_p = a[3]*sigma1_active[i]+b[3]
         G = -6.86712 + 0.58911*PHILIN_p-0.012966*PHILIN_p**2.0+0.00011939*PHILIN_p**3.0                                 ## Jenike Bulletin 123 P67: (Used only for the funnel flow case)
-        sigmaf_o[i] = rhob[i]*g*(B)/G
+        sigmaf_o[i] = rhob[i]*g*B/G
 
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delZ
