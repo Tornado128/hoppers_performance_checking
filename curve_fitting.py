@@ -18,16 +18,22 @@ def curve_fitting():
 	PHILIN = df_FFC.iloc[:,9]               # linearized angle of internal friction (see: https://www.mdpi.com/2075-4701/8/4/255)
 	rhob = df_FFC.iloc[:,7]                 # bulk density (kg/m3)
 	PHIE = df_FFC.iloc[:,8]                 # effective angle of internal friction (see: https://www.researchgate.net/figure/Illustration-of-a-powder-yield-locus-j-kinetic-angle-of-internal-friction-t_fig1_26551784)
-	SIGMA = df_wall.iloc[:,1]				# consolidation stress (pa)
-	TAU = df_wall.iloc[:,2]					# shear stress (pa)
+	SIGMA = df_wall.iloc[:,1]				# wall normal stress in the wall friction data (pa)
+	TAU = df_wall.iloc[:,2]					# shear stress in the wall friction data (pa)
 
 	WFA = np.arctan(TAU/SIGMA)*180/np.pi	# wall friction angle (degree)
 
+	## maximum and average wall friction angle and average angle of effective wall friction angle
+	max_WFA = np.max(WFA)
+	max_PHIE = np.max(PHIE)
+	average_WFA = np.average(WFA)
+	average_PHIE = np.average(PHIE)
+
 	## defining arrays of zero. a, b and c are the fitting coefficients for linear and powder curve fittings.
 	## The goal of fitting is to have a continuous function for FC, FFC, rhob, PHIE and PHILIN as a function of sigma1 (major principal stress)
-	a = np.zeros(5)
-	b = np.zeros(5)
-	c = np.zeros(5)
+	a = np.zeros(6)
+	b = np.zeros(6)
+	c = np.zeros(6)
 
 	## Linear objective function for FC, FFC and PHILIN
 	def objective_linear(x, a, b):
@@ -44,16 +50,19 @@ def curve_fitting():
 
 	popt, _ = curve_fit(objective_power, sigma1, rhob, maxfev=5000)     ## curve fitting for rhob vs sigma1 (power equation)
 	a[0], b[0], c[0] = popt                                             ## summarize the parameter values
-	popt, _ = curve_fit(objective_power, sigma1, PHIE, maxfev=5000)     ## curve fitting for PHIE vs sigma1 (power equation)
-	a[1], b[1], c[1] = popt                                             ## summarize the parameter values
+	popt, _ = curve_fit(objective_linear, sigma1, PHIE, maxfev=5000)    ## curve fitting for PHIE vs sigma1 (power equation)
+	a[1], b[1] = popt                                             		## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, FC)                   ## curve fitting for FC vs sigma1 (linear equation)
 	a[2], b[2] = popt                                                   ## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, PHILIN)               ## curve fitting for PHILIN vs sigma1 (linear equation)
 	a[3], b[3] = popt                                                   ## summarize the parameter values
-	popt, _ = curve_fit(objective_power_wall, SIGMA, WFA, maxfev=5000)    ## curve fitting for WFA vs SIGMA (power equation)
+	popt, _ = curve_fit(objective_power_wall, SIGMA, WFA, maxfev=5000)  ## curve fitting for WFA vs SIGMA (power equation)
 	a[4], b[4] = popt                                                   ## summarize the parameter values
 	c[4] = 90
-	return (a, b, c)													## returning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
+	popt, _ = curve_fit(objective_linear, SIGMA, TAU)  					## curve fitting for shear stress vs normal stress in the wall friction data
+	a[5], b[5] = popt
+
+	return (a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA)													## returning a, b and c arrays, which are the coefficients for curve fitting. Remember c is zero for some!
 
 '''
 import matplotlib.pyplot as plt

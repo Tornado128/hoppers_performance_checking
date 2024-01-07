@@ -3,7 +3,8 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
     import numpy as np
     from Janssen_Equation import Janssen_Equation
-    from Motzkus_Equation import Motzkus_Equation
+    from MPS_in_active_mode import MPS_in_active_mode
+    from MPS_in_passive_mode import MPS_in_passive_mode
     from MassFlow_or_FunnelFlow import MassFlow_or_FunnelFlow
 
 
@@ -16,17 +17,20 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
     N = 10000                                                               # number of mesh in the vertical section
     number = len(XX) - 1                                                    # number of sections in hopper (a hopper may have several cylinderical and cone parts)
-    sigmav = np.zeros(number*N)                                             # We initialized sigma0 (vertical stress) for the top of the powder as 0.
-    sigma1 = np.zeros(number*N)                                             # We initialized sigma1 (major principal stress) for the top of the powder as 0.
+    sigmav = np.zeros(number*N)                                             # We initialized sigmav (vertical stress load), Pa
+    sigma1_active = np.zeros(number*N)                                      # We initialized major principal stress in active mode (vertical stress load)
+    sigma1_passive = np.zeros(number*N)                                     # We initialized major principal stress in passive mode (vertical stress load)
     z = np.zeros(number*N)                                                  # (Hieght) From the top to the bottom direction (m)
-    sigmaf = np.zeros(number*N)                                             ## sigmaf is used ONLY for the case of estimation of stress on the abutment in the case of funnel flow
-                                                                            # for passive state. sigmaf is given in Eq. (22) of the reference.
-    UYS = np.zeros(number*N)                                                # unconfined yield strength (pa)
+    sigmaf = np.zeros(number*N)                                             ## sigmaf is used ONLY for the case of estimation of stress
+                                                                            # on the abutment in the case of funnel flow for passive state.
+                                                                            # sigmaf is given in Eq. (22) of the reference.
+    UYS_active = np.zeros(number*N)                                         # unconfined yield strength in the active mode  (Pa)
+    UYS_passive = np.zeros(number*N)                                        # unconfined yield strength in the passive mode  (Pa)
 
     numerator = 0                                                           # numerator, which is equal to the total number of elements in z direction
-    # This loop goes through all the cylinderical and cone parts of the hopper.
+    # This loop goes through all the sections of the hopper sequentially (from the top to the bottom).
     # If the section is cylinderical, it uses Janssen equation to obtain vertical stress distribution.
-    # if the section is cone shaped, it uses Motzkus equarion to obtain vertical stress distribution.
+    # if the section is cone shaped, it uses Motzkus equation to obtain vertical stress distribution.
     for i in range(number):
         X1 = XX[i]
         X2 = XX[i + 1]
@@ -36,27 +40,39 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
             z[numerator] = Z1 - (Z1 - Z2) * j / N
             numerator = numerator + 1
         if (X1 / X2 == 1):                                                  # If the ratio of the points remains as 1, it means that we are dealing with a cylinderical part and we will use Janssen equation to estimate the consolidation stress vs height
-            sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, WFA, PHIE, rhob, sigmaf_o, UYSf_o]=Janssen_Equation(KK, X1,X2,Z1,Z2,N,sigmav_init, RADIUS)
-            #print(sigmav_o[-1])
-            sigmav[i*N:(i+1)*N] = sigmav_o[:N]
-            sigma1[i*N:(i+1)*N] = sigma1_o[:N]
-            sigmaf[i * N:(i + 1) * N] = sigmaf_o[:N]                                  # sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (23) of the reference)
-            UYS[i * N:(i + 1) * N] = UYSf_o[:N]
-        else:                                                               # We are in the cone part of the hopper
-            sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, WFA, PHIE, rhob, sigmaf_o, UYSf_o]=Motzkus_Equation(KK, X1,X2,Z1,Z2,N,sigmav_init, RADIUS)
-            #print(sigmav_o[-1])
-            sigmav[i*N:(i+1)*N] = sigmav_o[:N]
-            sigma1[i*N:(i+1)*N] = sigma1_o[:N]
-            sigmaf[i * N:(i + 1) * N] = sigmaf_o[:N]                                  # sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (23) of the reference)
-            UYS[i * N:(i + 1) * N] = UYSf_o[:N]
 
-    ##WFA_out = WFA[-1]                                                       # wall friction angle at the outlet
-    ##PHIE_out = PHIE[-1]                                                     # effective angle of internal friction at the outlet
-    ##rhob_out = rhob[-1]
+            ## Janssen equation is valid for both active and passive modes to obtain MPS, vertical stress and UYS
+            sigmav_init = sigmav[i*N-i]
+            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o]=Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS)
+            sigmav[i*N:(i+1)*N] = sigmav_o[:N]
+            sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                       # MPS
+            sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                      # MPS for the passive mode which is equal to active mode for the Janssen equation
+            sigmaf[i * N:(i + 1) * N] = sigmaf_o[:N]                        # sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (22) of the reference)
+            UYS_active[i * N:(i + 1) * N] = UYSf_o[:N]                      # UYS for active mode
+            UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                     # UYS for the passive mode which is equal to active mode for the Janssen equation
+
+        else:                                                               # otherwise we are in the conical part of the hopper
+
+            ## We use Motzkus equation to obtain vertical stress and MPS in the active mode
+            sigmav_init = sigmav[i*N-i]
+            [sigmav_o, sigma1_o, UYSf_o]=MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            sigmav[i*N:(i+1)*N] = sigmav_o[:N]                                                                          #vertical stress in the active mode (Pa) in the conical part of the hopper
+            sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                                                                   #MPS in the active mode (Pa) in the conical part of the hopper
+            UYS_active[i * N:(i + 1) * N] = UYSf_o[:N]                                                                  #unconfined yield strength in the active mode (Pa)
+
+            ## We use radial stress theory to estimate major principal stress in the passive mode
+            sigmav_init = sigmav[i*N-i]
+            [sigma1_o, sigmaf_o, UYSf_o]=MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                                                                  #MPS in the passive mode (Pa) in the conical part of the hopper
+            sigmaf[i*N:(i+1)*N] = sigmaf_o[:N]                                                                          #sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (22) of the reference)
+            UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                                                                 #unconfined yield strength in the passive mode (Pa)
+
+    #WFA_out = WFA[-1]                                                       # wall friction angle at the outlet
+    #PHIE_out = PHIE[-1]                                                     # effective angle of internal friction at the outlet
+    #rhob_out = rhob[-1]
     # We want to determine if we are dealing with a mass flow or a funnel flow
-    [F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigmav, sigma1, PHIE, rhob, WFA, UYS, sigmaf, N, number, RADIUS)
-    return z, sigmav, sigma1, F, P, theta, theta_critical
+    [M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, RADIUS)
+
+    return M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive
 
 

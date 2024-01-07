@@ -45,7 +45,6 @@ if S == 1:
 X = r[k-1].x                    # X values for the position of the vessel
 Z = r[k-1].z                    # Z values (height) for the position of the vessel
 [volume, percent, vol] = vessel_volume(X, Z)
-
 # This function estimates the HEIGHT of the material in the hopper (m)
 # It also gives the radius (or x-location) associated with the height of the powder
 [HEIGHT, RADIUS] = height_position(X, Z, fill_percent)
@@ -55,16 +54,32 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[z, sigmav, sigma1, F, P, theta, theta_critical] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
+[M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
+
+plt.plot(sigma1_active,z,'g--',sigma1_passive,z,'m--',sigmav,z,'b--', UYS_active, z, 'r--', linewidth=2)
+plt.xlabel("stress (Pa)",fontsize=22)
+plt.ylabel("height (m)",fontsize=22)
+plt.xticks(fontsize=22)
+plt.yticks(fontsize=22)
+plt.legend(["major principal stress in the active state","major principal stress in the passive state", "vertical load", "unconfined yield strength in the active state"], fontsize=22)
+plt.show()
+
 if (F==1 and P==2):
-    output_passive = "We have funnel flow with rathole in the passive state"
+    output_passive = "We have funnel flow with a rathole in the passive state"
 if (F==1 and P==-2):
-    output_passive = "We have funnel flow but without rathole in the passive state"
+    output_passive = "We have funnel flow but without any rathole in the passive state"
 if (F==0 and P==0):
     output_passive = "We have mass flow without any arch formation in the passive state"
 if (F==0 and P==1):
     output_passive = "We have mass flow with arch formation in the passive state"
+if (M==0):
+    output_active = "No arch in the active state"
+if (M==1):
+    output_active = "An arch forms in the active state"
 
+print(output_active)
+print(output_passive)
+'''
 # Chance of arch formation in the active state
 # We will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
@@ -84,6 +99,7 @@ else:
     print("Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)")
     output_active = "Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)"
     print("Arching diameter is " + str("{:.2f}".format(D_arching)) + " m")
+
 
 print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " Pa")
 print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
@@ -124,10 +140,10 @@ plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)
 plt.yticks(fontsize=22)
-plt.legend(["major principal stress", "unconfined yield strength", "vertical load", "wall stress"], fontsize=22)
+plt.legend(["major principal stress in the active state", "unconfined yield strength", "vertical load", "wall stress"], fontsize=22)
 plt.title("%s" %output_active, fontsize=18)
 plt.show()
-
+'''
 
 
 
