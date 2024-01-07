@@ -49,8 +49,8 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
         if (WFA[i] > 85):
             WFA[i] = 85                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
 
-        #if (WFA[i]>PHIE[i]):
-        #    WFA[i] = PHIE[i]                            # Wall friction angle may be unphysically larger than effective angle of internal friction at very low stresses (close to the top of the powder)
+        if (WFA[i]>PHIE[i]):
+            WFA[i] = PHIE[i]                            # Wall friction angle may be unphysically larger than effective angle of internal friction at very low stresses (close to the top of the powder)
 
         ## Eq. (12) of Leung et al "A proposed complete methodology to predict gravity flow obstruction
         # of pharmaceutical powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475.
