@@ -16,7 +16,7 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
     [a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
 
     delZ = (Z1 - Z2)/N                                                  # increment size in z direction (m)
-    sigmav=0.1*np.ones(N)                                               # vertical load in the vertical section of the hopper (pa) (it varies with z)
+    sigmav=sigmav_init*np.ones(N)                                       # vertical load in the vertical section of the hopper (pa) (it varies with z)
     sigmav[0] = sigmav_init                                             # vertical load at the top of the cylinderical part of the hopper
     sigma1 = 0.1*np.ones(N)                                             # major principal stress (pa)
     sigmaf_o = 0.1*np.ones(N)                                           # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
@@ -69,7 +69,12 @@ def Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS):
     sigmav[N-1] = sigmav[N-1]
     z_loc[N-1] = (N-1) * delZ
     sigma1[:N] = sigmav[:N]                                                                                             #For cylinderical part of a hopper, major principal stress (sigma1) is equal to the vertical stress
-    return sigmav, sigma1, sigmaf_o, UYS
+
+    sigma1[0] = sigma1[1]
+    rhob[0] = rhob[1]
+    UYS[0] = UYS[1]
+    RH_diameter = G * UYS[-1] / (rhob[-1] * g)                                                                          # Rathole diameter (m)
+    return sigmav, sigma1, sigmaf_o, UYS, RH_diameter
 
 
 

@@ -54,15 +54,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
-
-plt.plot(sigma1_active,z,'g--',sigma1_passive,z,'m--',sigmav,z,'b--', UYS_active, z, 'r--', linewidth=2)
-plt.xlabel("stress (Pa)",fontsize=22)
-plt.ylabel("height (m)",fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.legend(["major principal stress in the active state","major principal stress in the passive state", "vertical load", "unconfined yield strength in the active state"], fontsize=22)
-plt.show()
+[M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, RH_diameter] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
     output_passive = "We have funnel flow with a rathole in the passive state"
@@ -77,21 +69,46 @@ if (M==0):
 if (M==1):
     output_active = "An arch forms in the active state"
 
-print(output_active)
-print(output_passive)
-'''
+print("1. "+output_active)
+print("2. "+output_passive)
+
+
 # Chance of arch formation in the active state
 # We will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
 # UYS = a[2]*sigma1+b[2]), a[0] and b[0] (because rhob=a[0]*sigma1^b[0]+c[0])
-[a, b, c] = curve_fitting()
-UYS = a[2]*sigma1+b[2]                                                                                                  # UYS is the unconfined yield strength (pa)
-rhob =a[0]*sigma1**b[0]+c[0]                                                                                            # Bulk density as a function of MPS
-WFA = a[4]*sigma1**b[4]+c[4]
+
+[a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
+rhob_active_outlet =a[0]*sigma1_active[-1]**b[0]+c[0]                                                                   # Bulk density as a function of MPS in the active mode
+rhob_passive_outlet = a[0]*sigma1_passive[-1]**b[0]+c[0]                                                                # Bulk density as a function of MPS in the passive mode
+WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
 theta = 90 - np.arctan((Z[-2]-Z[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
-H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference
-sigma = rhob[-1]*9.8*2*X[-1]/H                                                                                          # external stress: see eq. (2) of the reference
-D_arching = H * UYS[-1] / (rhob[-1]*9.8)                                                                                # arching diameter calculation based on Eq. (2) and Eq. (3)
+H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference: Leung et al
+D_arching_active = H * UYS_active[-1] / (rhob_active_outlet*9.8)                                                        # arching diameter (m) in the active mode: calculation based on Eq. (2) and Eq. (3)
+D_arching_active = D_arching_active * 1000                                                                              # arching diameter (mm) in the active mode
+D_arching_passive = H * UYS_passive[-1] / (rhob_passive_outlet*9.8)                                                     # arching diameter (m) in the passive mode: calculation based on Eq. (2) and Eq. (3)
+D_arching_passive = D_arching_passive * 1000                                                                            # arching diameter (mm) in the passive mode
+print("3. The outlet diameter is ", round(2*X[-1]*1000), " mm")
+print("4. The vertical load at the outlet of the hopper is ", round(sigmav[-1]), " Pa")
+print("5. Bulk density at the outlet in the active state is ", round(rhob_active_outlet), " kg/m3")
+print("6. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet), " kg/m3")
+print("7. Critical mass flow angle is ", round(theta_critical), " degrees")
+print("8. Arching diameter for the active state is ", round(D_arching_active), " mm")
+print("9. Arching diameter for the passive state is ", round(D_arching_passive), " mm")
+print("10. Rathole diameter is (for passive state) ", round(1000*RH_diameter), " mm")
+
+
+
+
+plt.plot(sigma1_active,z,'g--',sigma1_passive,z,'m--',sigmav,z,'b--', UYS_active, z, 'r--', linewidth=2)
+plt.xlabel("stress (Pa)",fontsize=22)
+plt.ylabel("height (m)",fontsize=22)
+plt.xticks(fontsize=22)
+plt.yticks(fontsize=22)
+plt.legend(["major principal stress in the active state","major principal stress in the passive state", "vertical load", "unconfined yield strength in the active state"], fontsize=22)
+plt.show()
+
+'''
 if (sigma > UYS[-1]):
     print("No arching in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)" )
     output_active = "No arching in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)"                                                                      # It will be shown in the title of the plots
@@ -134,15 +151,7 @@ for i in WFA:
     sigmaw[j] = KK * np.tan(math.radians(WFA[j]-0.001)) * sigmav[j]
     j = j + 1
 
-plt.plot(sigma1,z,'g--',UYS,z,'m--',sigmav,z,'b--', sigmaw, z, 'r--', linewidth=2)
-plt.plot()
-plt.xlabel("stress (Pa)",fontsize=22)
-plt.ylabel("height (m)",fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.legend(["major principal stress in the active state", "unconfined yield strength", "vertical load", "wall stress"], fontsize=22)
-plt.title("%s" %output_active, fontsize=18)
-plt.show()
+
 '''
 
 

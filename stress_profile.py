@@ -43,7 +43,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## Janssen equation is valid for both active and passive modes to obtain MPS, vertical stress and UYS
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o]=Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS)
+            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=Janssen_Equation(KK,X1,Z1,Z2,N,sigmav_init,RADIUS)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                       # MPS
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                      # MPS for the passive mode which is equal to active mode for the Janssen equation
@@ -62,7 +62,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## We use radial stress theory to estimate major principal stress in the passive mode
             sigmav_init = sigmav[i*N-i]
-            [sigma1_o, sigmaf_o, UYSf_o]=MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            [sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                                                                  #MPS in the passive mode (Pa) in the conical part of the hopper
             sigmaf[i*N:(i+1)*N] = sigmaf_o[:N]                                                                          #sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (22) of the reference)
             UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                                                                 #unconfined yield strength in the passive mode (Pa)
@@ -73,6 +73,6 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
     # We want to determine if we are dealing with a mass flow or a funnel flow
     [M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, RADIUS)
 
-    return M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive
+    return M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, RH_diameter
 
 

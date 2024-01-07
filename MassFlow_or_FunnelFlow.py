@@ -6,7 +6,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
     [a, b, c, max_PHIE, max_WFA, average_PHIE, average_WFA] = curve_fitting()
 
-    theta = (np.pi / 2 - np.arctan((Z2 - Z1) / (X2 - X1))) * 180 / np.pi                                                # hopper angle form vertical (degree)
+    theta = (np.pi / 2 - np.arctan((Z2 - Z1) / (X2 - X1+ 0.0000000001))) * 180 / np.pi                                  # hopper angle form vertical (degree)
     rhob_active_outlet = a[0] * sigma1_active[-1] ** b[0] + c[0]                                                        # bulk density at the outlet of the hopper in the active mode (Pa)
     UYS_active_outlet = a[2] * sigma1_active[-1] + b[2]                                                                 # UYS at the outlet of the hopper in the active mode(Pa)
 
