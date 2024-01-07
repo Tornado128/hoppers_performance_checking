@@ -47,8 +47,8 @@ def curve_fitting():
 		return a * x**b + 90
 	#
 
-	popt, _ = curve_fit(objective_power, sigma1, rhob, maxfev=5000)     ## curve fitting for rhob vs sigma1 (power equation)
-	a[0], b[0], c[0] = popt                                             ## summarize the parameter values
+	popt, _ = curve_fit(objective_linear, sigma1, rhob)     			## curve fitting for rhob vs sigma1 (power equation)
+	a[0], b[0] = popt                                             		## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, PHIE, maxfev=5000)    ## curve fitting for PHIE vs sigma1 (power equation)
 	a[1], b[1] = popt                                             		## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, FC)                   ## curve fitting for FC vs sigma1 (linear equation)

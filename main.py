@@ -76,11 +76,10 @@ print("2. "+output_passive)
 # Chance of arch formation in the active state
 # We will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
-# UYS = a[2]*sigma1+b[2]), a[0] and b[0] (because rhob=a[0]*sigma1^b[0]+c[0])
 
 [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
-rhob_active_outlet =a[0]*sigma1_active[-1]**b[0]+c[0]                                                                   # Bulk density as a function of MPS in the active mode
-rhob_passive_outlet = a[0]*sigma1_passive[-1]**b[0]+c[0]                                                                # Bulk density as a function of MPS in the passive mode
+rhob_active_outlet =a[0]*sigma1_active[-1]+b[0]                                                                         # Bulk density as a function of MPS in the active mode
+rhob_passive_outlet = a[0]*sigma1_passive[-1]+b[0]                                                                      # Bulk density as a function of MPS in the passive mode
 WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
 theta = 90 - np.arctan((Z[-2]-Z[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
 H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference: Leung et al

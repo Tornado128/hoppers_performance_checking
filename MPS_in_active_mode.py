@@ -33,11 +33,11 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     z_loc = np.zeros(N)                                                                                                 # increments in the vertical direction (m)
     sigmaf_o = 0.1 * np.ones(N)                                                                                         # stress in the to have rathole (only for the case of funnel flow: Eq. (23) of the reference)
 
-    rhob = np.zeros(N)                                                                                                  # bulk density (kg/m3)
-    PHIE = np.zeros(N)                                                                                                  # effective angle of internal friction (degree)
+    rhob = average_rhob * np.ones(N)                                                                                    # bulk density (kg/m3)
+    PHIE = average_PHIE * np.ones(N)                                                                                    # effective angle of internal friction (degree)
+    WFA = average_WFA * np.ones(N)                                                                                      # wall friction angle (degree)
     UYS = np.zeros(N)                                                                                                   # unconfined yield strength or "FC" (pa)
     PHILIN = np.zeros(N)                                                                                                # linearized angle of internal friction (degree)
-    WFA = np.zeros(N)                                                                                                   # wall friction angle (degree)
     for i in range(N):
 
         ## B is the diameter of the cone at this specific element
@@ -46,11 +46,13 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         # parameters for the Motzkus equation: parameters needed to estimate an initial guess for sigmav for
         # implementation of implicit Euler method
-        rhob[i] = a[0]*sigmav[i]**b[0]+c[0]
-        PHIE[i] = a[1] * sigmav[i] + b[1]
-        UYS[i] = a[2]*sigmav[i] + b[2]
-        PHILIN[i] = a[3]*sigmav[i] + b[3]
-        WFA[i] = a[4]*sigmav[i] ** b[4] + c[4]
+        if (i > 1):
+            rhob[i] = a[0]*sigmav[i-1]+b[0]
+            PHIE[i] = a[1] * sigmav[i-1] + b[1]
+            UYS[i] = a[2]*sigmav[i-1] + b[2]
+            PHILIN[i] = a[3]*sigmav[i-1] + b[3]
+            WFA[i] = a[4]*sigmav[i-1] ** b[4] + c[4]
+
         if (WFA[i] > 85):
             WFA[i] = 85                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
 
@@ -90,18 +92,22 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
             n = 2 * mu_f * lambda_f * np.tan(math.radians(90 - theta))
 
         sigmav_guess = (g * rhob[i] - n*sigmav[i]/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]                              # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
+
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
         # while loop checks that error percent (between our initial guess and the estimation) is below 0.1%
         while (error_percent>0.1 and j<100 and i<N-1):
-            rhob[i] = a[0] * sigmav_guess ** b[0] + c[0]
+
+            sigmav[i+1] = (g * rhob[i] - n*sigmav_guess/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]
+            error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
+
+            sigmav_guess = sigmav[i+1]
+
+            rhob[i] = a[0] * sigmav_guess + b[0]
             PHIE[i] = a[1] * sigmav_guess + b[1]
             UYS[i] = a[2] * sigmav_guess + b[2]
             PHILIN[i] = a[3] * sigmav_guess + b[3]
             WFA[i] = a[4] * sigmav_guess ** b[4] + c[4]
-            sigmav[i+1] = (g * rhob[i] - n*sigmav_guess/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]
-            error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
-            sigmav_guess = sigmav[i+1]
             z_loc[i + 1] = (i + 1) * delZ
 
             j = j + 1
@@ -122,14 +128,23 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
         if sigma1_active[i]<0:
             sigma1_active[i] = None
 
+    sigma1_active[0] = sigma1_active[1]
+    rhob[0] = rhob[1]
+    UYS[0] = UYS[1]
+
+    sigma1_active[-1] = sigma1_active[-2]
+    rhob[-1] = rhob[-2]
+    UYS[-1] = UYS[-2]
+
+    sigmav[N-1] = sigmav[N-2]
+    z_loc[N-1] = (N-1) * delZ
+
     for i in range(N):
         ## These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state
         PHILIN_p = a[3]*sigma1_active[i]+b[3]
         G = -6.86712 + 0.58911*PHILIN_p-0.012966*PHILIN_p**2.0+0.00011939*PHILIN_p**3.0                                 ## Jenike Bulletin 123 P67: (Used only for the funnel flow case)
         sigmaf_o[i] = rhob[i]*g*B/G
 
-    sigmav[N-1] = sigmav[N-2]
-    z_loc[N-1] = (N-1) * delZ
     RH_diameter = G * UYS[-1] / (rhob[-1]*g)                                                                            # Rathole diameter (m)
 
     return sigmav, sigma1_active, UYS, sigmaf_o, RH_diameter

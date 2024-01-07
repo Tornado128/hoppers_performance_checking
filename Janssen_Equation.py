@@ -48,14 +48,17 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
         # while loop checks that error percent (between our initial guess and the estimation) is below 0.1%
         while (error_percent>0.1 and j<100 and i<N-1):
-            rhob[i] = a[0] * sigmav_guess ** b[0] + c[0]
+
+            sigmav[i+1] = (g * rhob[i] - (4 * KK / D) * np.tan(WFA[i] * np.pi / 180) * sigmav_guess) * delZ + sigmav[i]
+            error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
+            sigmav_guess = sigmav[i+1]
+
+            rhob[i] = a[0] * sigmav_guess + b[0]
             PHIE[i] = a[1] * sigmav_guess + b[1]
             UYS[i] = a[2] * sigmav_guess + b[2]
             PHILIN[i] = a[3] * sigmav_guess + b[3]
             WFA[i] = a[4] * (sigmav_guess*KK) ** b[4] + c[4]
-            sigmav[i+1] = (g * rhob[i] - (4 * KK / D) * np.tan(WFA[i] * np.pi / 180) * sigmav_guess) * delZ + sigmav[i]
-            error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
-            sigmav_guess = sigmav[i+1]
+
             z_loc[i + 1] = (i + 1) * delZ
 
             j = j + 1
@@ -63,6 +66,15 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
     sigmav[N-1] = sigmav[N-1]
     z_loc[N-1] = (N-1) * delZ
     sigma1[:N] = sigmav[:N]                                                                                             #For cylinderical part of a hopper, major principal stress (sigma1) is equal to the vertical stress
+
+    sigma1[0] = sigma1[1]
+    rhob[0] = rhob[1]
+    UYS[0] = UYS[1]
+
+    sigma1[-1] = sigma1[-2]
+    rhob[-1] = rhob[-2]
+    UYS[-1] = UYS[-2]
+
 
     for i in range(N):
         # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state if the outlet section is vertical (like in Piccola)
@@ -75,9 +87,6 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
         # Some hoppers like Piccola have cylinderical outlets. That is why we put RADIUS of the outlet here
         sigmaf_o[i] = rhob[i] * g * B / G
 
-    sigma1[0] = sigma1[1]
-    rhob[0] = rhob[1]
-    UYS[0] = UYS[1]
     RH_diameter = G * UYS[-1] / (rhob[-1] * g)                                                                          # Rathole diameter (m)
     return sigmav, sigma1, sigmaf_o, UYS, RH_diameter
 

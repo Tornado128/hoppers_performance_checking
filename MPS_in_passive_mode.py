@@ -20,8 +20,8 @@ def MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     sigma1_passive[0] = sigmav_init                                                                                     # major principal stress in the active mode at the first node
     z_loc = np.zeros(N)                                                                                                 # increments in the vertical direction (m)
 
-    rhob_passive = np.zeros(N)                                                                                          # bulk density (kg/m3) in the passive mode
-    UYS_passive = np.zeros(N)                                                                                           # unconfined yield strength or "FC" (Pa) in the passive mode
+    rhob_passive = average_rhob*np.ones(N)                                                                              # bulk density (kg/m3) in the passive mode
+    UYS_passive = np.ones(N)                                                                                            # unconfined yield strength or "FC" (Pa) in the passive mode
 
     # Eq. (6) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475
     beta = (average_WFA + (180 / np.pi) * np.arcsin(
@@ -50,7 +50,7 @@ def MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
         sigma1_passive[i] = (1 + np.sin(math.radians(average_PHIE))) * Z * (RHO) * 9.8 * B / (
                     2 * (X - 1) * np.sin(math.radians(theta)))
 
-        rhob_passive[i] = a[0] * sigma1_passive[i]**b[0]+c[0]
+        rhob_passive[i] = a[0] * sigma1_passive[i]+b[0]
         RHO = rhob_passive[i]
         UYS_passive[i] = a[2] * sigma1_passive[i] + b[2]
 
