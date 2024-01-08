@@ -46,12 +46,10 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         # parameters for the Motzkus equation: parameters needed to estimate an initial guess for sigmav for
         # implementation of implicit Euler method
-        if (i > 1):
-            rhob[i] = a[0]*sigmav[i-1]+b[0]
-            PHIE[i] = a[1] * sigmav[i-1] + b[1]
-            UYS[i] = a[2]*sigmav[i-1] + b[2]
-            PHILIN[i] = a[3]*sigmav[i-1] + b[3]
-            WFA[i] = a[4]*sigmav[i-1] ** b[4] + c[4]
+        if (i > 0):
+            rhob[i] = a[0]*sigma1_active[i-1]+b[0]
+            PHIE[i] = a[1] * sigma1_active[i-1] + b[1]
+            WFA[i] = a[4]*sigma1_active[i-1] ** b[4] + c[4]
 
         if (WFA[i] > 85):
             WFA[i] = 85                                 # Wall friction angle can not be above 85 degrees; otherwise it is a big number
@@ -92,6 +90,8 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
             n = 2 * mu_f * lambda_f * np.tan(math.radians(90 - theta))
 
         sigmav_guess = (g * rhob[i] - n*sigmav[i]/((Z1-Z_apex-z_loc[i])))*delZ + sigmav[i]                              # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
+        if (i>0):
+            sigmav_guess = (g * rhob[i] - n * sigmav[i] / ((Z1 - Z_apex - z_loc[i]))) * delZ + sigmav[i]                # We use explicit euler method to estimate sigma0 provide an initial guess for the implicit euler method!
 
         j = 0                                                                                                           # numerator for the while loop
         error_percent = 100                                                                                             # the goal is to bring the error percent to below 0.1 percent for the convergence
@@ -102,12 +102,6 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
             error_percent = 100*abs( (sigmav_guess - sigmav[i + 1]) / sigmav_guess)
 
             sigmav_guess = sigmav[i+1]
-
-            rhob[i] = a[0] * sigmav_guess + b[0]
-            PHIE[i] = a[1] * sigmav_guess + b[1]
-            UYS[i] = a[2] * sigmav_guess + b[2]
-            PHILIN[i] = a[3] * sigmav_guess + b[3]
-            WFA[i] = a[4] * sigmav_guess ** b[4] + c[4]
             z_loc[i + 1] = (i + 1) * delZ
 
             j = j + 1
@@ -123,6 +117,12 @@ def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
         #print( ((1 + np.cos(2 * math.radians(theta))) * np.tan(math.radians(WFA[i]))) / (1 + np.sin(2 * math.radians(theta)) * np.tan(math.radians(WFA[i])) - 1 / K_for_MPS_calculation))
         # # major principal stress in the conical part in the active state: Eq. (17) of the appendix in the reference
         sigma1_active[i] = 0.5 * sigmav[i] * (1 + lambda_f) + abs(K_for_MPS_calculation * sigmav[i] - sigmav[i] * (1 + lambda_f) / 2) / np.cos(math.radians(beta_p))
+
+        rhob[i] = a[0] * sigma1_active[i] + b[0]
+        PHIE[i] = a[1] * sigma1_active[i] + b[1]
+        UYS[i] = a[2] * sigma1_active[i] + b[2]
+        PHILIN[i] = a[3] * sigma1_active[i] + b[3]
+        WFA[i] = a[4] * sigma1_active[i] ** b[4] + c[4]
 
         # sigma1_active may become negative at very low consolidation stresses at the top of the powder.
         if sigma1_active[i]<0:

@@ -37,6 +37,7 @@ def MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
                 1 - np.sin(math.radians(average_PHIE)) * np.sin(math.radians(beta + theta)) ** 3)
 
     RHO = average_rhob
+    PHI = average_PHIE
     for i in range(N):
 
         ## B is the diameter of the cone at this specific element
@@ -47,11 +48,12 @@ def MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         #Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
         #sigma1_passive is the major principal stress at the outlet of the hopper in the passive state
-        sigma1_passive[i] = (1 + np.sin(math.radians(average_PHIE))) * Z * (RHO) * 9.8 * B / (
+        sigma1_passive[i] = (1 + np.sin(math.radians(PHI))) * Z * (RHO) * 9.8 * B / (
                     2 * (X - 1) * np.sin(math.radians(theta)))
 
         rhob_passive[i] = a[0] * sigma1_passive[i]+b[0]
         RHO = rhob_passive[i]
+        PHI = a[1] * sigma1_passive[i] + b[1]
         UYS_passive[i] = a[2] * sigma1_passive[i] + b[2]
 
         z_loc[i] = (i + 1) * delZ

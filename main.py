@@ -115,12 +115,15 @@ plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\
           fontsize=18)
 plt.show()
 
-plt.plot(sigma1_active,z,'go',sigma1_passive,z,'m*',sigmav,z,'v-', UYS_active, z, '2r', linewidth=2)
+L=100
+plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go',sigma1_passive[::L],z[::L],'m*', UYS_active[::L], z[::L], 'Pr', UYS_passive[::L],z[::L],'pk',
+         markersize=10, markerfacecolor='none', linewidth=2)
 plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)
 plt.yticks(fontsize=22)
-plt.legend(["major principal stress in the active state","major principal stress in the passive state", "vertical load", "unconfined yield strength in the active state"], fontsize=22)
+plt.legend(["vertical load", "major principal stress in the active state","major principal stress in the passive state",
+            "unconfined yield strength in the active state", "unconfined yield strength in the passive state"], fontsize=22)
 plt.show()
 
 '''
