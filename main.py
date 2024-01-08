@@ -54,7 +54,8 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, RH_diameter] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
+[M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter] \
+    = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
     output_passive = "We have funnel flow with a rathole in the passive state"
@@ -116,14 +117,13 @@ plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\
 plt.show()
 
 L=100
-plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go',sigma1_passive[::L],z[::L],'m*', UYS_active[::L], z[::L], 'Pr', UYS_passive[::L],z[::L],'pk',
-         markersize=10, markerfacecolor='none', linewidth=2)
+plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go',sigma1_passive[::L],z[::L],'m*', UYS_active[::L], z[::L], 'Pr', UYS_passive[::L],z[::L],'pk', sigmaf[::L],z[::L],'cv',markersize=10, markerfacecolor='none', linewidth=2)
 plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)
 plt.yticks(fontsize=22)
 plt.legend(["vertical load", "major principal stress in the active state","major principal stress in the passive state",
-            "unconfined yield strength in the active state", "unconfined yield strength in the passive state"], fontsize=22)
+            "unconfined yield strength in the active state", "unconfined yield strength in the passive state","circumferential stress"], fontsize=22)
 plt.show()
 
 '''
