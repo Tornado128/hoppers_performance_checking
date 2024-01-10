@@ -3,7 +3,7 @@
 # sections of the hoppers
 # (3) The details for Janssen equation is given in "Dietmar Schulze. Flow properties of bulk solids. Powders and Bulk solids: Behavior, characterization, storage and flow (2021): 57-100. Page 259"
 # (4) Implicit methods are always stable although they are often slower in covergence compared to explicit methods
-def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
+def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting                                                                                             #This function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1
 
@@ -81,10 +81,10 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS):
         PHILIN_p = a[3] * sigma1[i] + b[3]
         # Jenike Bulletin 123 P67
         G = -6.86712 + 0.58911*PHILIN_p-0.012966*PHILIN_p**2.0+0.00011939*PHILIN_p**3.0
-        #G = -5.066 + 0.490 * PHILIN_p - 0.0112 * PHILIN_p ** 2 + 0.000108 * PHILIN_p ** 3  ## Eq. (23) of the Leung et al paper (used only for the funnel flow case)
 
         # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
         # Some hoppers like Piccola have cylinderical outlets. That is why we put RADIUS of the outlet here
+        # remeber B (diameter) is constant in the cylinderical part of the hopper
         sigmaf_o[i] = rhob[i] * g * B / G
 
     RH_diameter = G * UYS[-1] / (rhob[-1] * g)                                                                          # Rathole diameter (m)

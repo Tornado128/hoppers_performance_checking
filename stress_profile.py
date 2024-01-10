@@ -43,7 +43,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## Janssen equation is valid for both active and passive modes to obtain MPS, vertical stress and UYS
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init,RADIUS)
+            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                       # MPS
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                      # MPS for the passive mode which is equal to active mode for the Janssen equation
@@ -71,8 +71,8 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
     #PHIE_out = PHIE[-1]                                                     # effective angle of internal friction at the outlet
     #rhob_out = rhob[-1]
     # We want to determine if we are dealing with a mass flow or a funnel flow
-    [M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, RADIUS)
+    [Q, M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, RADIUS)
 
-    return M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter
+    return Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter
 
 

@@ -11,7 +11,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     UYS_active_outlet = a[2] * sigma1_active[-1] + b[2]                                                                 # UYS at the outlet of the hopper in the active mode(Pa)
 
     H = (130+theta)/65                                                                                                  # Eq. (3) of Leung et al
-    sigma_active_outlet = rhob_active_outlet*9.8*RADIUS/H                                                               # Eq. (2) of Leung et al to estimate the stress in the outlet (Pa)
+    sigma_active_outlet = rhob_active_outlet*9.8* 2 * X2 /H                                                         # Eq. (2) of Leung et al to estimate the stress in the outlet (Pa)
 
     ## ACTIVE STATE
     ## If the stress on the abutment (caused by gravity) is more than UYS, mass flow occurs in the active state
@@ -38,6 +38,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
     F = -1                                          # Initialization of F: Later, F=1 is funnel flow and F=0 is mass flow in the passive state
     P = -1                                          # Initialization of P: Later, If F=0, P=0 means no arch forms while P=1 is equivalent to arch formation
+    Q = -1                                          # Initialization of P: Later, if there is a funnel flow (F=1), the value of Q changes into 2 in the case of arch formation. It changes to -2 if no arch forms
     if (theta>theta_critical):
         F = 1                                       # funnel flow in the passive state
     else:
@@ -53,16 +54,31 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
     ## If there is a funnel flow, determine if there is a risk of rathole formation in the ENTIRE depth of the powder bed
     # in the hopper
-    a = a[2]
-    b = b[2]
+    a2 = a[2]
+    b2 = b[2]
     UYS_active = np.zeros(number*N)
     if (F == 1):
         for i in range(number*N):
-            UYS_active[i] = a * sigma1_active[i] + b
+            UYS_active[i] = a2 * sigma1_active[i] + b2
             if (sigmaf[i]<UYS_active[i]):
                 P = 2                   #rathole formation
-                break
             else:
-                P = -2                  # no rathole formation
+                P = -2                  #no rathole formation
 
-    return M, F, P, theta, theta_critical
+    ## If there is a funnel flow, determine if there is a risk of arch formation
+    # in the hopper
+    a0 = a[0]
+    b0 = b[0]
+    if (F == 1):
+        UYS_passive_outlet = a2 * sigma1_passive[-1] + b2
+        rhob_passive_outlet = a0 * sigma1_passive[-1] + b0
+
+        ## Eq. (2) and Eq. (3)
+        H = (130 + theta)/65
+        sigma = rhob_passive_outlet*9.8*X2*2/H
+
+        if (sigma<UYS_passive_outlet):
+            Q = 2                   #arch formation
+        else:
+            Q = -2                  # no arch formation
+    return Q, M, F, P, theta, theta_critical

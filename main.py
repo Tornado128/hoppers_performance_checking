@@ -7,8 +7,8 @@
 ## (5) If there is a funnel flow regime in the given hopper, the code determines if a rathole forms in the hopper
 ## Note: Remember that Jenike method is very conservative for the estimation of arch diameter. It is even more conservative
 ## for the prediction of rathole diameter
-import math
 
+import math
 import matplotlib.pyplot as plt
 import sys
 import numpy as np
@@ -54,7 +54,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter] \
+[Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter] \
     = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
@@ -69,9 +69,16 @@ if (M==0):
     output_active = "No arch in the active state"
 if (M==1):
     output_active = "An arch forms in the active state"
+if (Q==2):
+    output_passive2 = "An arch forms in the funnel flow in the passive state"
+if (Q==-2):
+    output_passive2 = "No arch forms in the funnel flow in the passive state"
+if (Q==-1):
+    output_passive2 = "No funnel flow!"
 
 print("1. "+output_active)
 print("2. "+output_passive)
+print("3. "+output_passive2)
 
 
 # Chance of arch formation in the active state
@@ -88,14 +95,14 @@ D_arching_active = H * UYS_active[-1] / (rhob_active_outlet*9.8)                
 D_arching_active = D_arching_active * 1000                                                                              # arching diameter (mm) in the active mode
 D_arching_passive = H * UYS_passive[-1] / (rhob_passive_outlet*9.8)                                                     # arching diameter (m) in the passive mode: calculation based on Eq. (2) and Eq. (3)
 D_arching_passive = D_arching_passive * 1000                                                                            # arching diameter (mm) in the passive mode
-print("3. The outlet diameter is ", round(2*X[-1]*1000,1), " mm")
-print("4. The vertical load at the outlet of the hopper is ", round(sigmav[-1],1), " Pa")
-print("5. Bulk density at the outlet in the active state is ", round(rhob_active_outlet,1), " kg/m3")
-print("6. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet,1), " kg/m3")
-print("7. Critical mass flow angle is ", round(theta_critical,1), " degrees")
-print("8. Arching diameter for the active state is ", round(D_arching_active,1), " mm")
-print("9. Arching diameter for the passive state is ", round(D_arching_passive,1), " mm")
-print("10. Rathole diameter is (for passive state) ", round(1000*RH_diameter,1), " mm")
+print("4. The outlet diameter is ", round(2*X[-1]*1000,1), " mm")
+print("5. The vertical load at the outlet of the hopper is ", round(sigmav[-1],1), " Pa")
+print("6. Bulk density at the outlet in the active state is ", round(rhob_active_outlet,1), " kg/m3")
+print("7. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet,1), " kg/m3")
+print("8. Critical mass flow angle is ", round(theta_critical,1), " degrees")
+print("9. Arching diameter for the active state is ", round(D_arching_active,1), " mm")
+print("10. Arching diameter for the passive state is ", round(D_arching_passive,1), " mm")
+print("11. Rathole diameter is (for passive state) ", round(1000*RH_diameter,1), " mm")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
