@@ -95,14 +95,14 @@ D_arching_active = H * UYS_active[-1] / (rhob_active_outlet*9.8)                
 D_arching_active = D_arching_active * 1000                                                                              # arching diameter (mm) in the active mode
 D_arching_passive = H * UYS_passive[-1] / (rhob_passive_outlet*9.8)                                                     # arching diameter (m) in the passive mode: calculation based on Eq. (2) and Eq. (3)
 D_arching_passive = D_arching_passive * 1000                                                                            # arching diameter (mm) in the passive mode
-print("4. The outlet diameter is ", round(2*X[-1]*1000,1), " mm and the angle from the vertical is ", round(theta,1), " degrees")
-print("5. The vertical load at the outlet of the hopper is ", round(sigmav[-1],1), " Pa")
-print("6. Bulk density at the outlet in the active state is ", round(rhob_active_outlet,1), " kg/m3")
-print("7. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet,1), " kg/m3")
-print("8. Critical mass flow angle is ", round(theta_critical,1), " degrees")
-print("9. Arching diameter for the active state is ", round(D_arching_active,1), " mm")
-print("10. Arching diameter for the passive state is ", round(D_arching_passive,1), " mm")
-print("11. Rathole diameter is (for passive state) ", round(1000*RH_diameter,1), " mm")
+print("4. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(theta,1), "degrees")
+print("5. The vertical load at the outlet of the hopper is", round(sigmav[-1],1), "Pa")
+print("6. Bulk density at the outlet in the active state is", round(rhob_active_outlet,1), "kg/m3")
+print("7. Bulk density at the outlet in the passive state is", round(rhob_passive_outlet,1), "kg/m3")
+print("8. Critical mass flow angle is ", round(theta_critical,1),"degrees")
+print("9. Arching diameter for the active state is", round(D_arching_active,1), "mm")
+print("10. Arching diameter for the passive state is", round(D_arching_passive,1), "mm")
+print("11. Rathole diameter is (for passive state)", round(1000*RH_diameter,1), "mm")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
