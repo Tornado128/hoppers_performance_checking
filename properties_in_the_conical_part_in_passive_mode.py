@@ -3,7 +3,7 @@
 #(3) Major principal stress in the  needed to estimate unconfined yield strength
 #(4) Major principal stress in the active mode in obtained in another function in the code
 
-def MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
+def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting
     import math

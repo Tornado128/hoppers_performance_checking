@@ -8,7 +8,7 @@
 ##(5) The reason for picking the numerical approach to solve Eq. (7) of the above reference is that the parameters like
 ##wall friction angle, bulk density, ... are changing in the vertical direction because of the increasing load
 
-def MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
+def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting
     import math
