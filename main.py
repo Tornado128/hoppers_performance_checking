@@ -70,9 +70,9 @@ if (M==0):
 if (M==1):
     output_active = "An arch forms in the active state"
 if (Q==2):
-    output_passive2 = "An arch forms in the funnel flow in the passive state"
+    output_passive2 = "An arch forms in funnel flow in the passive state"
 if (Q==-2):
-    output_passive2 = "No arch forms in the funnel flow in the passive state"
+    output_passive2 = "No arch forms in funnel flow in the passive state"
 if (Q==-1):
     output_passive2 = "No funnel flow!"
 
@@ -118,9 +118,9 @@ plt.ylabel("y-axis (m)",fontsize=16)
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
-plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive \
+plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive +"\n %s" %output_passive2\
           +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %theta, \
-          fontsize=18)
+          fontsize=14)
 plt.show()
 
 L=100

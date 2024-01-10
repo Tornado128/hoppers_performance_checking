@@ -75,7 +75,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
         ## Eq. (2) and Eq. (3)
         H = (130 + theta)/65
-        sigma = rhob_passive_outlet*9.8*X2*2/H
+        sigma = rhob_passive_outlet * 9.8 * X2 * 2 / H
 
         if (sigma<UYS_passive_outlet):
             Q = 2                   #arch formation
