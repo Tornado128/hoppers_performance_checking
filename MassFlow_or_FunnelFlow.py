@@ -78,7 +78,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
         sigma = rhob_passive_outlet * 9.8 * X2 * 2 / H
 
         if (sigma<UYS_passive_outlet):
-            Q = 2                   #arch formation
+            Q = 2                   #arch formation in the funnel flow
         else:
-            Q = -2                  # no arch formation
+            Q = -2                  # no arch formation in the funnel flow
     return Q, M, F, P, theta, theta_critical
