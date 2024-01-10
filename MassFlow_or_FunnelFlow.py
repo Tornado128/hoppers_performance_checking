@@ -11,7 +11,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     UYS_active_outlet = a[2] * sigma1_active[-1] + b[2]                                                                 # UYS at the outlet of the hopper in the active mode(Pa)
 
     H = (130+theta)/65                                                                                                  # Eq. (3) of Leung et al
-    sigma_active_outlet = rhob_active_outlet*9.8* 2 * X2 /H                                                         # Eq. (2) of Leung et al to estimate the stress in the outlet (Pa)
+    sigma_active_outlet = rhob_active_outlet * 9.8 * 2 * X2 /H                                                          # Eq. (2) of Leung et al to estimate the stress in the outlet (Pa)
 
     ## ACTIVE STATE
     ## If the stress on the abutment (caused by gravity) is more than UYS, mass flow occurs in the active state
