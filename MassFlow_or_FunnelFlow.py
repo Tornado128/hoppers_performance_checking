@@ -1,5 +1,5 @@
 
-def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, RADIUS):
+def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number):
 
     import numpy as np
     from curve_fitting import curve_fitting
