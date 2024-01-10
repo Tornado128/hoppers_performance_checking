@@ -3,8 +3,8 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
     import numpy as np
     from Janssen_Equation import Janssen_Equation
-    from MPS_in_active_mode import MPS_in_active_mode
-    from MPS_in_passive_mode import MPS_in_passive_mode
+    from properties_in_the_conical_part_in_active_mode import properties_in_the_conical_part_in_active_mode
+    from properties_in_the_conical_part_in_passive_mode import properties_in_the_conical_part_in_passive_mode
     from MassFlow_or_FunnelFlow import MassFlow_or_FunnelFlow
 
 
@@ -55,7 +55,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## We use Motzkus equation to obtain vertical stress and MPS in the active mode
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, UYSf_o, sigmaf_o, RH_diameter]=MPS_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            [sigmav_o, sigma1_o, UYSf_o, sigmaf_o, RH_diameter]=properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]                                                                          #vertical stress in the active mode (Pa) in the conical part of the hopper
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                                                                   #MPS in the active mode (Pa) in the conical part of the hopper
             UYS_active[i * N:(i + 1) * N] = UYSf_o[:N]                                                                  #unconfined yield strength in the active mode (Pa)
@@ -63,7 +63,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## We use radial stress theory to estimate major principal stress in the passive mode
             sigmav_init = sigmav[i*N-i]
-            [sigma1_o, UYSf_o]=MPS_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            [sigma1_o, UYSf_o]=properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                                                                  #MPS in the passive mode (Pa) in the conical part of the hopper
             UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                                                                 #unconfined yield strength in the passive mode (Pa)
 
