@@ -38,7 +38,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
     F = -1                                          # Initialization of F: Later, F=1 is funnel flow and F=0 is mass flow in the passive state
     P = -1                                          # Initialization of P: Later, If F=0, P=0 means no arch forms while P=1 is equivalent to arch formation
-    Q = -1                                          # Initialization of P: Later, if there is a funnel flow (F=1), the value of Q changes into 2 in the case of arch formation. It changes to -2 if no arch forms
+    Q = -1                                          # Initialization of P: Later, if there is a funnel flow in the passive state (F=1), the value of Q changes into 2 in the case of arch formation. It changes to -2 if no arch forms
     if (theta>theta_critical):
         F = 1                                       # funnel flow in the passive state
     else:
