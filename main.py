@@ -54,7 +54,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter] \
+[Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, theta] \
     = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
@@ -95,7 +95,7 @@ D_arching_active = H * UYS_active[-1] / (rhob_active_outlet*9.8)                
 D_arching_active = D_arching_active * 1000                                                                              # arching diameter (mm) in the active mode
 D_arching_passive = H * UYS_passive[-1] / (rhob_passive_outlet*9.8)                                                     # arching diameter (m) in the passive mode: calculation based on Eq. (2) and Eq. (3)
 D_arching_passive = D_arching_passive * 1000                                                                            # arching diameter (mm) in the passive mode
-print("4. The outlet diameter is ", round(2*X[-1]*1000,1), " mm")
+print("4. The outlet diameter is ", round(2*X[-1]*1000,1), " mm and the angle from the vertical is ", round(theta,1), " degrees")
 print("5. The vertical load at the outlet of the hopper is ", round(sigmav[-1],1), " Pa")
 print("6. Bulk density at the outlet in the active state is ", round(rhob_active_outlet,1), " kg/m3")
 print("7. Bulk density at the outlet in the passive state is ", round(rhob_passive_outlet,1), " kg/m3")

@@ -73,6 +73,6 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
     # We want to determine if we are dealing with a mass flow or a funnel flow
     [Q, M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number)
 
-    return Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter
+    return Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, theta
 
 
