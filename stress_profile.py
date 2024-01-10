@@ -67,10 +67,6 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                                                                  #MPS in the passive mode (Pa) in the conical part of the hopper
             UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                                                                 #unconfined yield strength in the passive mode (Pa)
 
-    #WFA_out = WFA[-1]                                                       # wall friction angle at the outlet
-    #PHIE_out = PHIE[-1]                                                     # effective angle of internal friction at the outlet
-    #rhob_out = rhob[-1]
-    # We want to determine if we are dealing with a mass flow or a funnel flow
     [Q, M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number)
 
     return Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, theta
