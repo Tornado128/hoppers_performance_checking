@@ -30,17 +30,12 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     # Eq. 20 and 21 in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475
     # X and Z are just two parameters needed to estimate the major principal stress at the outlet of the hopper
     # in the passive state ("sigma1_passive")
-    X1 = 2 * np.sin(math.radians(average_PHIE)) / (1 - np.sin(math.radians(average_PHIE)))          #numerator of Eq. (20)
-    X2 = np.sin(math.radians(2 * beta + theta)) / np.sin(math.radians(theta)) + 1                   #numerator of Eq. (21)
+    X1 = 2 * np.sin(math.radians(average_PHIE)) / (1 - np.sin(math.radians(average_PHIE)))          #I have decomposed Eq. (20) to two parts: part 1
+    X2 = np.sin(math.radians(2 * beta + theta)) / np.sin(math.radians(theta)) + 1                   #I have decomposed Eq. (21) to two parts: part 2
     X = X1 * X2
-
-    Z3 = ((2 * (1 - np.cos(math.radians(beta + theta)))) * np.sin(math.radians(theta)) + np.sin(
-        math.radians(beta)) * np.sin(math.radians(beta + theta)) ** 2) / (
-                1 - np.sin(math.radians(average_PHIE)) * np.sin(math.radians(beta + theta)) ** 3)
 
     Z1 = (2 * (1 - np.cos(math.radians(beta + theta)))) * np.sin(math.radians(theta)) + np.sin(math.radians(beta)) * np.sin(math.radians(beta + theta)) ** 2
     Z2 = (1 - np.sin(math.radians(average_PHIE))) * np.sin(math.radians(beta + theta)) ** 3
-
     Z = Z1/Z2
 
     RHO = average_rhob
@@ -55,12 +50,11 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         #Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
         #sigma1_passive is the major principal stress at the outlet of the hopper in the passive state
-        sigma1_passive[i] = (1 + np.sin(math.radians(PHI))) * Z * (RHO) * 9.8 * B / (
-                    2 * (X - 1) * np.sin(math.radians(theta)))
+        sigma1_passive[i] = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B / (2 * (X - 1) * np.sin(math.radians(theta)))
 
         rhob_passive[i] = a[0] * sigma1_passive[i]+b[0]
-        RHO = rhob_passive[i]
-        PHI = a[1] * sigma1_passive[i] + b[1]
+        RHO = average_rhob
+        PHI = average_PHIE
         UYS_passive[i] = a[2] * sigma1_passive[i] + b[2]
 
         z_loc[i] = (i + 1) * delZ
