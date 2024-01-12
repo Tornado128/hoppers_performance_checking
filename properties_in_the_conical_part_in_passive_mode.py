@@ -31,7 +31,7 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     # X and Z are just two parameters needed to estimate the major principal stress at the outlet of the hopper
     # in the passive state ("sigma1_passive")
     X = (2 * np.sin(math.radians(average_PHIE)) / (1 - np.sin(math.radians(average_PHIE)))) * (
-            abs(np.sin(math.radians(2 * beta + theta))) / (np.sin(math.radians(theta)) + 1))
+            np.sin(math.radians(2 * beta + theta))/ (np.sin(math.radians(theta)) + 1))
     Z = ((2 * (1 - np.cos(math.radians(beta + theta)))) * np.sin(math.radians(theta)) + np.sin(
         math.radians(beta)) * np.sin(math.radians(beta + theta)) ** 2) / (
                 1 - np.sin(math.radians(average_PHIE)) * np.sin(math.radians(beta + theta)) ** 3)

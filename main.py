@@ -84,7 +84,6 @@ print("3. "+output_passive2)
 # Chance of arch formation in the active state
 # We will call curve fitting function to obtain fc (or UYS:unconfined yield strength)
 # and rhob (bulk density) as a function of MPS. We need a[2], b[2] (because
-
 [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
 rhob_active_outlet =a[0]*sigma1_active[-1]+b[0]                                                                         # Bulk density as a function of MPS in the active mode
 rhob_passive_outlet = a[0]*sigma1_passive[-1]+b[0]                                                                      # Bulk density as a function of MPS in the passive mode
@@ -124,60 +123,14 @@ plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\
 plt.show()
 
 L=100
-plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go',sigma1_passive[::L],z[::L],'m*', UYS_active[::L], z[::L], 'Pr', UYS_passive[::L],z[::L],'pk', sigmaf[::L],z[::L],'cv',markersize=10, markerfacecolor='none', linewidth=2)
+plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'k-.', UYS_active[::L], z[::L], 'Pr','pk', sigmaf[::L],z[::L],'cv',markersize=10, markerfacecolor='none', linewidth=2)
 plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)
 plt.yticks(fontsize=22)
-plt.legend(["vertical load", "major principal stress in the active state","major principal stress in the passive state",
-            "unconfined yield strength in the active state", "unconfined yield strength in the passive state","circumferential stress"], fontsize=22)
+plt.legend(["vertical load", "major principal stress in the active state","unconfined yield strength in the active state","circumferential stress"], fontsize=22)
 plt.show()
 
-'''
-if (sigma > UYS[-1]):
-    print("No arching in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)" )
-    output_active = "No arching in the active state because, at the outlet, external stress (%0.2f"%sigma+" pa) is larger than UYS (%0.2f"%UYS[-1]+" pa)"                                                                      # It will be shown in the title of the plots
-else:
-    print("Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)")
-    output_active = "Arching takes place in the active state because, at the outlet, external stress (%0.2f" % sigma + " pa) is smaller than UYS (%0.2f" %UYS[-1] + " pa)"
-    print("Arching diameter is " + str("{:.2f}".format(D_arching)) + " m")
-
-
-print("Vertical load at the outlet is " + str("{:.2f}".format(sigmav[-1])) + " Pa")
-print("MPS at the outlet is " + str("{:.2f}".format(sigma1[-1])) + " kg/m3")
-print("Bulk density at the outlet is " + str("{:.2f}".format(rhob[-1])) + " kg/m3")
-print("UYS at the outlet is " + str("{:.2f}".format(UYS[-1])) + " kg/m3")
-print("The critical mass flow angle is " + str("{:.2f}".format(theta_critical)) + " while the hopper angle from the vertical is " + str("{:.2f}".format(theta)))
-
-## showing the dimensions of the hopper
-percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
-plt.plot(r[k-1].x, r[k-1].z,'b-')
-plt.plot([-x for x in r[k-1].x], r[k-1].z,'b-')
-## putting label of percent of filling
-for i in range(len(X) - 1):
-    plt.text(X[i],Z[i],'filling%: {}'.format(round(percent[i],1)),fontsize=16,color='g')
-    plt.axhline(Z[i], color='g', linestyle='--')
-plt.axhline(HEIGHT, color='r', linestyle='--')
-plt.xlabel("x-axis (m)",fontsize=16)
-plt.ylabel("y-axis (m)",fontsize=16)
-plt.xticks(fontsize=16)
-plt.yticks(fontsize=16)
-volume_liter = round(1000*volume,2)                                             # m3 to liter
-plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive \
-          +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %theta, \
-          fontsize=18)
-plt.show()
-
-
-#estimation of vertical wall stress
-sigmaw = np.zeros(len(WFA))
-j = 0
-for i in WFA:
-    sigmaw[j] = KK * np.tan(math.radians(WFA[j]-0.001)) * sigmav[j]
-    j = j + 1
-
-
-'''
 
 
 
