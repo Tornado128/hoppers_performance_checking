@@ -24,9 +24,9 @@ def curve_fitting():
 	WFA = np.arctan(TAU/SIGMA)*180/np.pi	# wall friction angle (degree)
 
 	## Average wall friction angle and average angle of effective wall friction angle
-	average_WFA = 51#np.average(WFA)
-	average_PHIE = 62.85#np.average(PHIE)
-	average_rhob = np.average(rhob)
+	average_WFA = np.average(WFA)		#51
+	average_PHIE = np.average(PHIE)		#62.85
+	average_rhob = np.average(rhob)		#264.1
 
 	## defining arrays of zero. a, b and c are the fitting coefficients for linear and powder curve fittings.
 	## The goal of fitting is to have a continuous function for FC, FFC, rhob, PHIE and PHILIN as a function of sigma1 (major principal stress)

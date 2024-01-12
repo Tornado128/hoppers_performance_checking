@@ -50,6 +50,9 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         #Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
         #sigma1_passive is the major principal stress at the outlet of the hopper in the passive state
+        nume = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B
+        deno = 2 * (X - 1) * np.sin(math.radians(theta))
+        LLL = nume/deno
         sigma1_passive[i] = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B / (2 * (X - 1) * np.sin(math.radians(theta)))
 
         rhob_passive[i] = a[0] * sigma1_passive[i]+b[0]
