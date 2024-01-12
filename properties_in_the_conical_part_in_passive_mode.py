@@ -30,13 +30,13 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     # Eq. 20 and 21 in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475
     # X and Z are just two parameters needed to estimate the major principal stress at the outlet of the hopper
     # in the passive state ("sigma1_passive")
-    X1 = 2 * np.sin(math.radians(average_PHIE)) / (1 - np.sin(math.radians(average_PHIE)))          #I have decomposed Eq. (20) to two parts: part 1
-    X2 = np.sin(math.radians(2 * beta + theta)) / np.sin(math.radians(theta)) + 1                   #I have decomposed Eq. (21) to two parts: part 2
-    X = X1 * X2
+    X_part1 = 2 * np.sin(math.radians(average_PHIE)) / (1 - np.sin(math.radians(average_PHIE)))          #I have decomposed Eq. (20) to two parts: part 1
+    X_part2 = np.sin(math.radians(2 * beta + theta)) / np.sin(math.radians(theta)) + 1                   #I have decomposed Eq. (21) to two parts: part 2
+    X = X_part1 * X_part2
 
-    Z1 = (2 * (1 - np.cos(math.radians(beta + theta)))) * np.sin(math.radians(theta)) + np.sin(math.radians(beta)) * np.sin(math.radians(beta + theta)) ** 2
-    Z2 = (1 - np.sin(math.radians(average_PHIE))) * np.sin(math.radians(beta + theta)) ** 3
-    Z = Z1/Z2
+    Z_part1 = (2 * (1 - np.cos(math.radians(beta + theta)))) * np.sin(math.radians(theta)) + np.sin(math.radians(beta)) * np.sin(math.radians(beta + theta)) ** 2
+    Z_part2 = (1 - np.sin(math.radians(average_PHIE))) * np.sin(math.radians(beta + theta)) ** 3
+    Z = Z_part1/Z_part2
 
     RHO = average_rhob
     PHI = average_PHIE
