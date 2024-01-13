@@ -102,6 +102,7 @@ print("8. Critical mass flow angle is ", round(theta_critical,1),"degrees")
 print("9. Arching diameter for the active state is", round(D_arching_active,1), "mm")
 print("10. Arching diameter for the passive state is", round(D_arching_passive,1), "mm")
 print("11. Rathole diameter is (for passive state)", round(1000*RH_diameter,1), "mm")
+print("12. Major principal stress in the passive state at the outlet is", round(sigma1_passive[-1],1), "Pa")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
