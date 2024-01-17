@@ -34,9 +34,16 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init):
         B = 2.0 * B
 
         ## parameters for the Janssen equation: parameters needed to estimate an initial guess for sigmav for implementation of implicit Euler method
-        rhob[i] = average_rhob
-        PHIE[i] = average_PHIE
-        WFA[i] = average_WFA
+        if i == 0:
+            rhob[i] = average_rhob
+            PHIE[i] = average_PHIE
+            WFA[i] = average_WFA
+        else:
+            rhob[i] = a[0] * sigmav[i-1] + b[0]
+            PHIE[i] = a[1] * sigmav[i-1] + b[1]
+            WFA[i] = a[4] * (sigmav_guess*KK) ** b[4] + c[4]
+
+
         #UYS[i] = a[2]*sigmav[i] + b[2]
         #PHILIN[i] = a[3]*sigmav[i] + b[3]
         if (WFA[i]>85):
@@ -75,20 +82,20 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init):
     rhob[-1] = rhob[-2]
     UYS[-1] = UYS[-2]
 
+    return sigmav, sigma1, UYS
+    #for i in range(N):
+    #    # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state if the outlet section is vertical (like in Piccola)
+    #    PHILIN_p = a[3] * sigma1[i] + b[3]
+    #    # Jenike Bulletin 123 P67
+    #    G = -6.86712 + 0.58911*PHILIN_p-0.012966*PHILIN_p**2.0+0.00011939*PHILIN_p**3.0
 
-    for i in range(N):
-        # These three lines are used only for evaluation of rathole for the case of the formation of funnel flow in the passive state if the outlet section is vertical (like in Piccola)
-        PHILIN_p = a[3] * sigma1[i] + b[3]
-        # Jenike Bulletin 123 P67
-        G = -6.86712 + 0.58911*PHILIN_p-0.012966*PHILIN_p**2.0+0.00011939*PHILIN_p**3.0
+    #    # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
+    #    # Some hoppers like Piccola have cylinderical outlets. That is why we put RADIUS of the outlet here
+    #    # remeber B (diameter) is constant in the cylinderical part of the hopper
+    #    sigmaf_o[i] = rhob[i] * g * B / G
 
-        # stress in the abutment (only for the case of funnel flow: Eq. (23) of the reference)
-        # Some hoppers like Piccola have cylinderical outlets. That is why we put RADIUS of the outlet here
-        # remeber B (diameter) is constant in the cylinderical part of the hopper
-        sigmaf_o[i] = rhob[i] * g * B / G
-
-    RH_diameter = G * UYS[-1] / (rhob[-1] * g)                                                                          # Rathole diameter (m)
-    return sigmav, sigma1, sigmaf_o, UYS, RH_diameter
+    #RH_diameter = G * UYS[-1] / (rhob[-1] * g)                                                                          # Rathole diameter (m)
+    #return sigmav, sigma1, sigmaf_o, UYS, RH_diameter
 
 
 

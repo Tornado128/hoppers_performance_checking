@@ -6,6 +6,7 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
     from properties_in_the_conical_part_in_active_mode import properties_in_the_conical_part_in_active_mode
     from properties_in_the_conical_part_in_passive_mode import properties_in_the_conical_part_in_passive_mode
     from MassFlow_or_FunnelFlow import MassFlow_or_FunnelFlow
+    from rathole_diameter_estimation import rathole_diameter_estimation
 
 
 
@@ -43,11 +44,10 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## Janssen equation is valid for both active and passive modes to obtain MPS, vertical stress and UYS
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, sigmaf_o, UYSf_o, RH_diameter]=Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init)
+            [sigmav_o, sigma1_o, UYSf_o]=Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                       # MPS
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                      # MPS for the passive mode which is equal to active mode for the Janssen equation
-            sigmaf[i * N:(i + 1) * N] = sigmaf_o[:N]                        # sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (22) of the reference)
             UYS_active[i * N:(i + 1) * N] = UYSf_o[:N]                      # UYS for active mode
             UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                     # UYS for the passive mode which is equal to active mode for the Janssen equation
 
@@ -55,17 +55,19 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## We use Motzkus equation to obtain vertical stress and MPS in the active mode
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, UYSf_o, sigmaf_o, RH_diameter]=properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            [sigmav_o, sigma1_o, UYSf_o]=properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]                                                                          #vertical stress in the active mode (Pa) in the conical part of the hopper
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                                                                   #MPS in the active mode (Pa) in the conical part of the hopper
             UYS_active[i * N:(i + 1) * N] = UYSf_o[:N]                                                                  #unconfined yield strength in the active mode (Pa)
-            sigmaf[i * N:(i + 1) * N]=sigmaf_o[:N]                                                                      #sigmaf is useful only for the funnel flow case to evaluate the possibility of ratholing (Eq. (22) of the reference)
 
             ## We use radial stress theory to estimate major principal stress in the passive mode
             sigmav_init = sigmav[i*N-i]
             [sigma1_o, UYSf_o]=properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                                                                  #MPS in the passive mode (Pa) in the conical part of the hopper
             UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                                                                 #unconfined yield strength in the passive mode (Pa)
+
+    [RH_diameter,sigmaf_o] = rathole_diameter_estimation(N, number, sigma1_active, X2)
+    sigmaf = sigmaf_o
 
     [Q, M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number)
 
