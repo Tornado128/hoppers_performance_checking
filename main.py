@@ -123,7 +123,7 @@ plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\
           fontsize=14)
 plt.show()
 
-L=100
+L=10
 plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go', UYS_active[::L], z[::L], 'Pr',sigmaf[::L],z[::L],'cv',markersize=10, markerfacecolor='none', linewidth=2)
 plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
