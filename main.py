@@ -11,7 +11,6 @@
 import math
 import matplotlib.pyplot as plt
 import sys
-import numpy as np
 from HopperSpecification import *                                                                                       #This is a constructor where several conical hoppers are defined as objects
 from is_number import *                                                                                                 #This function checks if the inputs are numbers and if they are processable
 from vessel_volume import *                                                                                             #This function estimates the volume of the hoppers
