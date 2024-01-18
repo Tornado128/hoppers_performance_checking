@@ -54,7 +54,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, theta] \
+[Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive] \
     = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
@@ -88,12 +88,7 @@ print("3. "+output_passive2)
 rhob_active_outlet =a[0]*sigma1_active[-1]+b[0]                                                                         # Bulk density as a function of MPS in the active mode
 rhob_passive_outlet = a[0]*sigma1_passive[-1]+b[0]                                                                      # Bulk density as a function of MPS in the passive mode
 WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
-theta = 90 - np.arctan((Z[-2]-Z[-1])/(X[-2]-X[-1]+0.000000000000001))*180/np.pi                                         # angle of the outlet of the hopper from a vertical line
-H = (130 +theta)/65                                                                                                     # Eq. (3) of the reference: Leung et al
-D_arching_active = H * UYS_active[-1] / (rhob_active_outlet*9.8)                                                        # arching diameter (m) in the active mode: calculation based on Eq. (2) and Eq. (3)
-D_arching_active = D_arching_active * 1000                                                                              # arching diameter (mm) in the active mode
-D_arching_passive = H * UYS_passive[-1] / (rhob_passive_outlet*9.8)                                                     # arching diameter (m) in the passive mode: calculation based on Eq. (2) and Eq. (3)
-D_arching_passive = D_arching_passive * 1000                                                                            # arching diameter (mm) in the passive mode
+
 print("4. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(theta,1), "degrees")
 print("5. The vertical load at the outlet of the hopper is", round(sigmav[-1],1), "Pa")
 print("6. Bulk density at the outlet in the active state is", round(rhob_active_outlet,1), "kg/m3")

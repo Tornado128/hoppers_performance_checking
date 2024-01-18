@@ -12,6 +12,7 @@ def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting
     import math
+    from D_arch_active_estimation import D_arch_active_estimation
 
     # imaginary position of the apex of the cone (see Figure 4 of the reference)
     Z_apex = ((Z2-Z1)/(X2-X1))*(0-X1)+Z1
@@ -139,4 +140,7 @@ def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delZ
 
-    return sigmav, sigma1_active, UYS
+    # arch diameter in the active state
+    D_arching_active = D_arch_active_estimation(UYS, rhob, theta)
+
+    return sigmav, sigma1_active, UYS, D_arching_active
