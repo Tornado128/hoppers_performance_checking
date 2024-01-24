@@ -39,8 +39,8 @@ def curve_fitting():
 		return a * x + b
 
 	## Power objective function for rhob and PHIE
-	def objective_power(x, a, b, c):
-		return a * x ** b + c
+	def objective_2nd_oder_polynomial(x, a, b, c):
+		return a * x ** 2 + b * x + c
 
 	## Power objective function for WFA (the intercept is defined as 90 degrees because we expect that wall friction angle approaches 90 degrees at low sigma)
 	def objective_power_wall(x, a, b):
@@ -51,8 +51,8 @@ def curve_fitting():
 	a[0], b[0] = popt                                             		## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, PHIE, maxfev=5000)    ## curve fitting for PHIE vs sigma1 (power equation)
 	a[1], b[1] = popt                                             		## summarize the parameter values
-	popt, _ = curve_fit(objective_linear, sigma1, FC)                   ## curve fitting for FC vs sigma1 (linear equation)
-	a[2], b[2] = popt                                                   ## summarize the parameter values
+	popt, _ = curve_fit(objective_2nd_oder_polynomial, sigma1, FC)      ## curve fitting for FC vs sigma1 (linear equation)
+	a[2], b[2], c[2] = popt                                             ## summarize the parameter values
 	popt, _ = curve_fit(objective_linear, sigma1, PHILIN)               ## curve fitting for PHILIN vs sigma1 (linear equation)
 	a[3], b[3] = popt                                                   ## summarize the parameter values
 	popt, _ = curve_fit(objective_power_wall, SIGMA, WFA, maxfev=5000)  ## curve fitting for WFA vs SIGMA (power equation)
