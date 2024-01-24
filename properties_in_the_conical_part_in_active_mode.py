@@ -132,15 +132,25 @@ def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     sigma1_active[0] = sigma1_active[1]
     rhob[0] = rhob[1]
     UYS[0] = UYS[1]
+    WFA[0] = WFA[1]
+    PHIE[0] = PHIE[1]
 
     sigma1_active[-1] = sigma1_active[-2]
     rhob[-1] = rhob[-2]
     UYS[-1] = UYS[-2]
+    WFA[-1] = WFA[-2]
+    PHIE[-1] = PHIE[-2]
 
     sigmav[N-1] = sigmav[N-2]
     z_loc[N-1] = (N-1) * delZ
 
+    UYS_active_conical_outlet = UYS[-1]
+    sigma1_active_conical_outlet = sigma1_active[-1]
+    rhob_active_conical_outlet = rhob[-1]
+    WFA_active_conical_outlet = WFA[-1]
+    PHIE_active_conical_outlet = PHIE[-1]
+
     # arch diameter in the active state
     D_arching_active = D_arch_active_estimation(UYS, rhob, theta)
 
-    return sigmav, sigma1_active, UYS, D_arching_active
+    return sigmav, sigma1_active, UYS, D_arching_active, UYS_active_conical_outlet, sigma1_active_conical_outlet, rhob_active_conical_outlet, WFA_active_conical_outlet, PHIE_active_conical_outlet

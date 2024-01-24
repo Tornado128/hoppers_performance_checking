@@ -53,7 +53,7 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive] \
+[Q, M, F, P, ANGLE, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive] \
     = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
@@ -88,7 +88,7 @@ rhob_active_outlet =a[0]*sigma1_active[-1]+b[0]                                 
 rhob_passive_outlet = a[0]*sigma1_passive[-1]+b[0]                                                                      # Bulk density as a function of MPS in the passive mode
 WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
 
-print("4. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(theta,1), "degrees")
+print("4. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(ANGLE,1), "degrees")
 print("5. The vertical load at the outlet of the hopper is", round(sigmav[-1],1), "Pa")
 print("6. Bulk density at the outlet in the active state is", round(rhob_active_outlet,1), "kg/m3")
 print("7. Bulk density at the outlet in the passive state is", round(rhob_passive_outlet,1), "kg/m3")
@@ -113,7 +113,7 @@ plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
 plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive +"\n %s" %output_passive2\
-          +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %theta, \
+          +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %ANGLE, \
           fontsize=14)
 plt.show()
 

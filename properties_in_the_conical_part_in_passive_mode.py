@@ -23,6 +23,8 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
     rhob_passive = average_rhob*np.ones(N)                                                                              # bulk density (kg/m3) in the passive mode
     UYS_passive = np.ones(N)                                                                                            # unconfined yield strength or "FC" (Pa) in the passive mode
+    WFA_passive = np.ones(N)
+    PHIE_passive = np.ones(N)
 
     # Eq. (6) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475
     beta = (average_WFA + (180 / np.pi) * np.arcsin(
@@ -60,6 +62,8 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
         RHO = average_rhob
         PHI = average_PHIE
         UYS_passive[i] = a[2] * sigma1_passive[i]**2 + b[2]*sigma1_passive[i] + c[2]
+        WFA_passive[i] = a[4] * sigma1_passive[i] ** b[4] + c[4]
+        PHIE_passive[i] = a[1] * sigma1_passive[i] + b[1]
 
         z_loc[i] = (i + 1) * delZ
 
@@ -68,8 +72,14 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     rhob_passive[0] = rhob_passive[1]
     UYS_passive[0] = UYS_passive[1]
 
+    UYS_passive_conical_outlet = UYS_passive[-1]
+    sigma1_passive_conical_outlet = sigma1_passive[-1]
+    rhob_passive_conical_outlet = rhob_passive[-1]
+    WFA_passive_conical_outlet = WFA_passive[-1]
+    PHIE_passive_conical_outlet = PHIE_passive[-1]
+
     # arch diameter in the passive state
     D_arching_passive =D_arch_passive_estimation(UYS_passive, rhob_passive, theta)
 
-
-    return sigma1_passive, UYS_passive, D_arching_passive, theta        #I am returning theta because it is going to be finally the angle from the vertical for last conical part of the hopper
+    # I am returning theta because it is going to be finally the angle from the vertical for last conical part of the hopper
+    return sigma1_passive, UYS_passive, D_arching_passive, theta, UYS_passive_conical_outlet, sigma1_passive_conical_outlet, rhob_passive_conical_outlet, WFA_passive_conical_outlet, PHIE_passive_conical_outlet

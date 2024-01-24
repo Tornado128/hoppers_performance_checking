@@ -55,22 +55,26 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
 
             ## We use Motzkus equation to obtain vertical stress and MPS in the active mode
             sigmav_init = sigmav[i*N-i]
-            [sigmav_o, sigma1_o, UYSf_o, D_arching_active]=properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            [sigmav_o, sigma1_o, UYSf_o, D_arching_active, UYS_active_conical_outlet, sigma1_active_conical_outlet, rhob_active_conical_outlet, WFA_active_conical_outlet, PHIE_active_conical_outlet]=properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigmav[i*N:(i+1)*N] = sigmav_o[:N]                                                                          #vertical stress in the active mode (Pa) in the conical part of the hopper
             sigma1_active[i*N:(i+1)*N] = sigma1_o[:N]                                                                   #MPS in the active mode (Pa) in the conical part of the hopper
             UYS_active[i * N:(i + 1) * N] = UYSf_o[:N]                                                                  #unconfined yield strength in the active mode (Pa)
 
             ## We use radial stress theory to estimate major principal stress in the passive mode
             sigmav_init = sigmav[i*N-i]
-            [sigma1_o, UYSf_o, D_arching_passive, ANGLE]=properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
+            [sigma1_o, UYSf_o, D_arching_passive, ANGLE, UYS_passive_conical_outlet, sigma1_passive_conical_outlet, rhob_passive_conical_outlet, WFA_passive_conical_outlet, PHIE_passive_conical_outlet]=properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init)
             sigma1_passive[i*N:(i+1)*N] = sigma1_o[:N]                                                                  #MPS in the passive mode (Pa) in the conical part of the hopper
             UYS_passive[i * N:(i + 1) * N] = UYSf_o[:N]                                                                 #unconfined yield strength in the passive mode (Pa)
 
     [RH_diameter,sigmaf_o] = rathole_diameter_estimation(N, number, sigma1_active, X2)
     sigmaf = sigmaf_o
 
-    [Q, M, F, P, theta, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number)
+    #ANGLE is the angle from the vertical of the last conical part of the hopper
+    [Q, M, F, P, ANGLE, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, ANGLE,
+                                                                 UYS_passive_conical_outlet, sigma1_passive_conical_outlet, rhob_passive_conical_outlet, WFA_passive_conical_outlet,
+                                                                 PHIE_passive_conical_outlet,UYS_active_conical_outlet, sigma1_active_conical_outlet, rhob_active_conical_outlet,
+                                                                 WFA_active_conical_outlet, PHIE_active_conical_outlet)
 
-    return Q, M, F, P, theta, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive
+    return Q, M, F, P, ANGLE, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive
 
 
