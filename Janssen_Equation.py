@@ -62,7 +62,7 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init):
 
             rhob[i] = a[0] * sigmav_guess + b[0]
             PHIE[i] = a[1] * sigmav_guess + b[1]
-            UYS[i] = a[2] * sigmav_guess + b[2]
+            UYS[i] = a[2] * sigmav_guess**2 + b[2]*sigmav_guess +c[2]
             PHILIN[i] = a[3] * sigmav_guess + b[3]
             WFA[i] = a[4] * (sigmav_guess*KK) ** b[4] + c[4]
 

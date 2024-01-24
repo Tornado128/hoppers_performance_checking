@@ -121,7 +121,7 @@ def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         rhob[i] = a[0] * sigma1_active[i] + b[0]
         PHIE[i] = a[1] * sigma1_active[i] + b[1]
-        UYS[i] = a[2] * sigma1_active[i] + b[2]
+        UYS[i] = a[2] * sigma1_active[i]**2 + b[2]*sigma1_active[i] + c[2]
         PHILIN[i] = a[3] * sigma1_active[i] + b[3]
         WFA[i] = a[4] * sigma1_active[i] ** b[4] + c[4]
 

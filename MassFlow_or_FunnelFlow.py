@@ -8,7 +8,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
     theta = (np.pi / 2 - np.arctan((Z2 - Z1) / (X2 - X1+ 0.0000000001))) * 180 / np.pi                                  # hopper angle form vertical (degree)
     rhob_active_outlet = a[0] * sigma1_active[-1] + b[0]                                                                # bulk density at the outlet of the hopper in the active mode (Pa)
-    UYS_active_outlet = a[2] * sigma1_active[-1] + b[2]                                                                 # UYS at the outlet of the hopper in the active mode(Pa)
+    UYS_active_outlet = a[2] * sigma1_active[-1]**2 + b[2]*sigma1_active[-1] + c[2]                                                                 # UYS at the outlet of the hopper in the active mode(Pa)
 
     H = (130+theta)/65                                                                                                  # Eq. (3) of Leung et al
     sigma_active_outlet = rhob_active_outlet * 9.8 * 2 * X2 /H                                                          # Eq. (2) of Leung et al to estimate the stress in the outlet (Pa)
@@ -46,7 +46,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
 
     if (F == 0):                                    # if there is a mass flow, determine if there is a risk of arch formation
 
-        UYS_passive_outlet = a[2]*sigma1_passive[-1]+b[2]
+        UYS_passive_outlet = a[2]*sigma1_passive[-1]**2 +b[2]*sigma1_passive[-1] + c[2]
         if (sigma1_passive[-1]>UYS_passive_outlet):
             P = 0                           # no arch in the passive state
         else:
@@ -56,10 +56,11 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     # in the hopper
     a2 = a[2]
     b2 = b[2]
+    c2 = c[2]
     UYS_active = np.zeros(number*N)
     if (F == 1):
         for i in range(number*N):
-            UYS_active[i] = a2 * sigma1_active[i] + b2
+            UYS_active[i] = a2 * sigma1_active[i]**2 + b2*sigma1_active[i] + c2
             if (sigmaf[i]<UYS_active[i]):
                 P = 2                   #rathole formation
             else:
@@ -70,7 +71,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     a0 = a[0]
     b0 = b[0]
     if (F == 1):
-        UYS_passive_outlet = a2 * sigma1_passive[-1] + b2
+        UYS_passive_outlet = a2 * sigma1_passive[-1]**2 + b2*sigma1_passive[-1] + c2
         rhob_passive_outlet = a0 * sigma1_passive[-1] + b0
 
         ## Eq. (2) and Eq. (3)

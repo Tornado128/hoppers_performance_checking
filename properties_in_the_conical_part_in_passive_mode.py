@@ -59,7 +59,7 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
         rhob_passive[i] = a[0] * sigma1_passive[i]+b[0]
         RHO = average_rhob
         PHI = average_PHIE
-        UYS_passive[i] = a[2] * sigma1_passive[i] + b[2]
+        UYS_passive[i] = a[2] * sigma1_passive[i]**2 + b[2]*sigma1_passive[i] + c[2]
 
         z_loc[i] = (i + 1) * delZ
 
@@ -71,4 +71,5 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     # arch diameter in the passive state
     D_arching_passive =D_arch_passive_estimation(UYS_passive, rhob_passive, theta)
 
-    return sigma1_passive, UYS_passive, D_arching_passive
+
+    return sigma1_passive, UYS_passive, D_arching_passive, theta        #I am returning theta because it is going to be finally the angle from the vertical for last conical part of the hopper

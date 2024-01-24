@@ -22,7 +22,7 @@ def rathole_diameter_estimation(N, number, sigma1_active, X2):
 
         rhob[i] = a[0] * sigma1_active[i] + b[0]
         sigmaf_o[i] = rhob[i] * g * B / G
-        UYS[i] = a[2]*sigma1_active[i] + b[2]
+        UYS[i] = a[2]*sigma1_active[i]**2 + b[2]*sigma1_active[i] + c[2]
 
     RH_diameter = G * UYS[-1] / (rhob[-1] * g)                                                                          # Eq. (22) of the reference: Rathole diameter (m)
 
