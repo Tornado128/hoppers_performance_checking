@@ -57,27 +57,27 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
     = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
-    output_passive = "We have funnel flow with a rathole in the passive state"
+    output_passive = "A funnel flow with a rathole in the passive state is predicted"
 if (F==1 and P==-2):
-    output_passive = "We have funnel flow but without any rathole in the passive state"
+    output_passive = "A funnel flow without any rathole in the passive state is predicted"
 if (F==0 and P==0):
-    output_passive = "We have mass flow without any arch formation in the passive state"
+    output_passive = "Mass flow without any arch in the passive state is predicted"
 if (F==0 and P==1):
-    output_passive = "We have mass flow with arch formation in the passive state"
+    output_passive = "Mass flow with with an arch in the passive state is predicted"
 if (M==0):
-    output_active = "No arch in the active state"
+    output_active = "No arch in the active state is predicted"
 if (M==1):
-    output_active = "An arch forms in the active state"
+    output_active = "An arch in the active state is predicted"
 if (Q==2):
-    output_passive2 = "An arch forms in funnel flow in the passive state"
+    output_passive2 = "An arch in the passive state is predicted"
 if (Q==-2):
-    output_passive2 = "No arch forms in funnel flow in the passive state"
+    output_passive2 = "No arch forms in the passive state is predicted"
 if (Q==-1):
-    output_passive2 = "No funnel flow!"
+    output_passive2 = "No funnel flow is predicted"
 
 print("1. "+output_active)
-print("2. "+output_passive)
-print("3. "+output_passive2)
+print("2. "+output_passive2)
+print("3. "+output_passive)
 
 
 # Chance of arch formation in the active state

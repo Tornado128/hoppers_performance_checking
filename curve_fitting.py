@@ -9,9 +9,9 @@ def curve_fitting():
 
 
 	# reading the sheet that has the stress walk data (gives FFC as a function of normal stress)
-	df_FFC = pd.read_excel('powder_rheometry_data.xls',sheet_name='stress_walk')
+	df_FFC = pd.read_excel('powder_rheometry_data2.xls',sheet_name='stress_walk')
 	# reading the sheet that has the wall friction data (shear stress as a function of normal stress)
-	df_wall = pd.read_excel('powder_rheometry_data.xls',sheet_name='wall_friction_data')
+	df_wall = pd.read_excel('powder_rheometry_data2.xls',sheet_name='wall_friction_data')
 
 	sigma1 = df_FFC.iloc[:,2]               # sigma1 is the major principal stress (MPa)
 	FC = df_FFC.iloc[:,3]                   # FC is the cohesive strength (MPa)

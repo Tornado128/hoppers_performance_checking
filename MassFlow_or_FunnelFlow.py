@@ -58,7 +58,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     b2 = b[2]
     c2 = c[2]
     UYS_active = np.zeros(number*N)
-    if (F == 1):
+    if (F == 1):                ## if it is a funnel flow in passive state
         for i in range(number*N):
             UYS_active[i] = a2 * sigma1_active[i]**2 + b2*sigma1_active[i] + c2
             if (sigmaf[i]<UYS_active[i]):
@@ -70,7 +70,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     # in the hopper
     #a0 = a[0]
     #b0 = b[0]
-    if (F == 1):
+    if (F == 1):                ## if it is a funnel flow in passive state
         #UYS_passive_outlet = a2 * sigma1_passive[-1]**2 + b2*sigma1_passive[-1] + c2
         #rhob_passive_outlet = a0 * sigma1_passive[-1] + b0
 
@@ -81,5 +81,5 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
         if (sigma<UYS_passive_conical_outlet):
             Q = 2                   #arch formation in the funnel flow
         else:
-            Q = -2                  # no arch formation in the funnel flow
+            Q = -2                  #no arch formation in the funnel flow
     return Q, M, F, P, ANGLE, theta_critical

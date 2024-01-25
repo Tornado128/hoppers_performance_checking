@@ -49,21 +49,39 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
         B = X1 - i*(X1-X2)/N
         B = 2.0 * B
 
-
-
         #Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
         #sigma1_passive is the major principal stress at the outlet of the hopper in the passive state
-        nume = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B
-        deno = 2 * (X - 1) * np.sin(math.radians(theta))
-        LLL = nume/deno
+        #nume = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B
+        #deno = 2 * (X - 1) * np.sin(math.radians(theta))
+        #LLL = nume/deno
         sigma1_passive[i] = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B / (2 * (X - 1) * np.sin(math.radians(theta)))
+        check = sigma1_passive[i]
 
-        rhob_passive[i] = a[0] * sigma1_passive[i]+b[0]
-        RHO = average_rhob
-        PHI = average_PHIE
+        rhob_passive[i] = a[0] * sigma1_passive[i] + b[0]
         UYS_passive[i] = a[2] * sigma1_passive[i]**2 + b[2]*sigma1_passive[i] + c[2]
-        WFA_passive[i] = a[4] * sigma1_passive[i] ** b[4] + c[4]
+        WFA_passive[i] = a[4] * abs(sigma1_passive[i]+0.000001) ** b[4] + c[4]
         PHIE_passive[i] = a[1] * sigma1_passive[i] + b[1]
+
+        # RHO and PHI are going to be plugged into Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
+        RHO = rhob_passive[i]
+        PHI = PHIE_passive[i]
+
+        if (WFA_passive[i]>PHIE_passive[i]):
+            PHIE_passive[i] = WFA_passive[i]
+
+        # Eq. (6) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475
+        beta = (WFA_passive[i] + (180 / np.pi) * np.arcsin(np.sin(WFA_passive[i] * np.pi / 180) / np.sin(PHIE_passive[i] * np.pi / 180+0.0001))) / 2
+
+        # X is going to be plugged into Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
+        X_part1 = np.sin(math.radians(2 * beta + theta)) / np.sin(math.radians(theta)) + 1                              # I have decomposed Eq. (21) to two parts: part 2
+        X = X_part1 * 2 * np.sin(math.radians(PHIE_passive[i])) / (1 - np.sin(math.radians(PHIE_passive[i])))
+        phi = WFA_passive[i]
+
+        # Z is the same as Y in Eq (21) of Leung et al. It is going to be plugged into Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
+        Z_part1 = (2 * (1 - np.cos(math.radians(beta + theta)))) * np.sin(math.radians(theta)) + np.sin(math.radians(beta)) * np.sin(math.radians(beta + theta)) ** 2
+        Z_part2 = (1 - np.sin(math.radians(PHIE_passive[i]))) * np.sin(math.radians(beta + theta)) ** 3
+        Z = Z_part1 / Z_part2
+
 
         z_loc[i] = (i + 1) * delZ
 
