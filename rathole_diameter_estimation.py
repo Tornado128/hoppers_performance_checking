@@ -12,7 +12,7 @@ def rathole_diameter_estimation(N, number, sigma1_active, X2):
     # This function fits bulk density, effective angle of internal
     # friction, FC and FFC vs sigma1. It also does a power fit for WFA vs normal stress
     # a, b and c are the coefficients for power and linear curve fittings.
-    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, min_rhob, max_PHIE, max_WFA] = curve_fitting()
 
     # stress in the abutment (only for the case of funnel flow: Eq. (23) of Leung et al, J. Pharmaceuticaals Sciences, 2019, 108, 264)
     for i in range(number*N):

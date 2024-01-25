@@ -13,7 +13,7 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init):
     #This function fits bulk density, effective angle of internal
     # friction, FC and FFC vs sigma1. It also does a power fit for WFA vs normal stress
     # a, b and c are the coefficients for power and linear curve fittings.
-    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, min_rhob, max_PHIE, max_WFA] = curve_fitting()
 
     delZ = (Z1 - Z2)/N                                                  # increment size in z direction (m)
     sigmav=sigmav_init*np.ones(N)                                       # vertical load in the vertical section of the hopper (pa) (it varies with z)
@@ -35,9 +35,9 @@ def Janssen_Equation(KK,X1,X2,Z1,Z2,N,sigmav_init):
 
         ## parameters for the Janssen equation: parameters needed to estimate an initial guess for sigmav for implementation of implicit Euler method
         if i == 0:
-            rhob[i] = average_rhob
-            PHIE[i] = average_PHIE
-            WFA[i] = average_WFA
+            rhob[i] = min_rhob
+            PHIE[i] = max_PHIE
+            WFA[i] = max_WFA
         else:
             rhob[i] = a[0] * sigmav[i-1] + b[0]
             PHIE[i] = a[1] * sigmav[i-1] + b[1]

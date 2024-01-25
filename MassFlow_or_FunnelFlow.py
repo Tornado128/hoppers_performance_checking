@@ -4,7 +4,7 @@ def MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf
     import numpy as np
     from curve_fitting import curve_fitting
 
-    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, min_rhob, max_PHIE, max_WFA] = curve_fitting()
 
     #theta = (np.pi / 2 - np.arctan((Z2 - Z1) / (X2 - X1+ 0.0000000001))) * 180 / np.pi                                  # hopper angle form vertical (degree)
     #rhob_active_outlet = a[0] * sigma1_active[-1] + b[0]                                                                # bulk density at the outlet of the hopper in the active mode (Pa)

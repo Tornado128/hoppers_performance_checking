@@ -23,7 +23,7 @@ def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     #"curve_fitting" function fits bulk density, effective angle of internal friction, FC and FFC vs sigma1.
     #It also does a power fit for wall friction angle vs normal stress
     #a, b and c are the coefficients for power and linear curve fittings.
-    [a, b, c, average_rhob, average_PHIE, average_WFA] = curve_fitting()
+    [a, b, c, min_rhob, max_PHIE, max_WFA] = curve_fitting()
 
 
     theta = (np.pi/2 - np.arctan((Z2-Z1)/(X2-X1)))*180/np.pi                                                            # hopper vertical angle (degree)
@@ -34,9 +34,9 @@ def properties_in_the_conical_part_in_active_mode(X1,X2,Z1,Z2,N,sigmav_init):
     z_loc = np.zeros(N)                                                                                                 # increments in the vertical direction (m)
     sigmaf_o = 0.1 * np.ones(N)                                                                                         # stress in the to have rathole (only for the case of funnel flow: Eq. (23) of the reference)
 
-    rhob = average_rhob * np.ones(N)                                                                                    # bulk density (kg/m3)
-    PHIE = average_PHIE * np.ones(N)                                                                                    # effective angle of internal friction (degree)
-    WFA = average_WFA * np.ones(N)                                                                                      # wall friction angle (degree)
+    rhob = min_rhob * np.ones(N)                                                                                    # bulk density (kg/m3)
+    PHIE = max_PHIE * np.ones(N)                                                                                    # effective angle of internal friction (degree)
+    WFA = max_WFA * np.ones(N)                                                                                      # wall friction angle (degree)
     UYS = np.zeros(N)                                                                                                   # unconfined yield strength or "FC" (pa)
     PHILIN = np.zeros(N)                                                                                                # linearized angle of internal friction (degree)
     for i in range(N):
