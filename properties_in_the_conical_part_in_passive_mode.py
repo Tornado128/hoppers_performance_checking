@@ -1,8 +1,5 @@
-#(1) We implemented implicit Euler method to obtain major principal stress for the conical part of the hopper in the active state
-#(2) We are assuming that (likewise Jenike) wall normal stress in the conical hopper is equal to major principal stress
-#(3) Major principal stress in the  needed to estimate unconfined yield strength
-#(4) We use radial stress theory to obtain the stress at the outlet in the passive state. This stress is used to estimate arching diameter in the passive state
-
+#(1) We use radial stress theory to obtain the stress at the outlet in the passive state. This stress is used to estimate arching diameter in the passive state
+#(2) Although we obtained the major principal stress in the conical part of the hopper using radial stress theory, we only need sigma1 at the outlet of the conical part
 def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
     import numpy as np
     from curve_fitting import curve_fitting
@@ -51,11 +48,7 @@ def properties_in_the_conical_part_in_passive_mode(X1,X2,Z1,Z2,N,sigmav_init):
 
         #Eq. (19) in Leung et al, J. pharmaceutical sciences, 108 (2019) 464-475.
         #sigma1_passive is the major principal stress at the outlet of the hopper in the passive state
-        #nume = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B
-        #deno = 2 * (X - 1) * np.sin(math.radians(theta))
-        #LLL = nume/deno
         sigma1_passive[i] = (1 + np.sin(math.radians(PHI))) * Z * RHO * 9.8 * B / (2 * (X - 1) * np.sin(math.radians(theta)))
-        check = sigma1_passive[i]
 
         rhob_passive[i] = a[0] * sigma1_passive[i] + b[0]
         UYS_passive[i] = a[2] * sigma1_passive[i]**2 + b[2]*sigma1_passive[i] + c[2]
