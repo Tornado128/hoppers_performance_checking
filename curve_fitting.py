@@ -32,11 +32,11 @@ def curve_fitting():
 	b = np.zeros(6)
 	c = np.zeros(6)
 
-	## Linear objective function for FC, FFC and PHILIN
+	## Linear objective function
 	def objective_linear(x, a, b):
 		return a * x + b
 
-	## Power objective function for rhob and PHIE
+	## Power objective function
 	def objective_2nd_oder_polynomial(x, a, b, c):
 		return a * x ** 2 + b * x + c
 
