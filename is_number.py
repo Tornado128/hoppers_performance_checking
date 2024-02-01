@@ -7,7 +7,7 @@ def is_number(k,fill_percent):
         k =int(k)                   # The inputs are always considered as strings by Python. That is why we need to change k to a integer
     except ValueError:
         S = 1
-    if (S==0 and (k > 6 or k < 1)):     # checking if the number is between 1 and 6
+    if (S==0 and (k > 7 or k < 1)):     # checking if the number is between 1 and 6
         S = 1
         #sys.exit(1)
 

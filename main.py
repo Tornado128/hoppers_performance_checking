@@ -28,6 +28,8 @@ print("3. Piccola")
 print('4. Courtoy')
 print('5. Korsch_XL100_poor_flow')
 print('6. Korsch_XL100_gravity')
+print('7. 300L_IBC')
+
 k = input("Enter the number! ")                                                                                         # A number between 1 to 6 must be selected
 
 fill_percent = input("Enter the filling percent of the hopper system! ")                                                # How much is the filling percent of the hopper vessel?
