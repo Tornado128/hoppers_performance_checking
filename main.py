@@ -55,8 +55,8 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
 # Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
 # Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[Q, M, F, P, ANGLE, theta_critical, z, sigmav, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive] \
-    = stress_profile(KK, HEIGHT, RADIUS, X, Z)
+[Q, M, F, P, ANGLE, theta_critical, z, sigmav_active, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive,
+ rhob_active_conical_outlet, rhob_passive_conical_outlet, sigma1_active_conical_outlet, sigma1_passive_conical_outlet] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
 if (F==1 and P==2):
     output_passive = "A funnel flow with a rathole in the passive state is predicted"
@@ -91,14 +91,14 @@ rhob_passive_outlet = a[0]*sigma1_passive[-1]+b[0]                              
 WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
 
 print("4. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(ANGLE,1), "degrees")
-print("5. The vertical load at the outlet of the hopper is", round(sigmav[-1],1), "Pa")
-print("6. Bulk density at the outlet in the active state is", round(rhob_active_outlet,1), "kg/m3")
-print("7. Bulk density at the outlet in the passive state is", round(rhob_passive_outlet,1), "kg/m3")
+print("5. The vertical load at the outlet of the hopper is", round(sigma1_active_conical_outlet,1), "Pa")
+print("6. Bulk density at the outlet in the active state is", round(rhob_active_conical_outlet,1), "kg/m3")
+print("7. Bulk density at the outlet in the passive state is", round(rhob_passive_conical_outlet,1), "kg/m3")
 print("8. Critical mass flow angle is ", round(theta_critical,1),"degrees")
 print("9. Arching diameter for the active state is", round(D_arching_active,1), "mm")
 print("10. Arching diameter for the passive state is", round(D_arching_passive,1), "mm")
 print("11. Rathole diameter is (for passive state)", round(1000*RH_diameter,1), "mm")
-print("12. Major principal stress in the passive state at the outlet is", round(sigma1_passive[-1],1), "Pa")
+print("12. Major principal stress in the passive state at the outlet is", round(sigma1_passive_conical_outlet,1), "Pa")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
@@ -120,7 +120,7 @@ plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\
 plt.show()
 
 L=10
-plt.plot(sigmav[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go', UYS_active[::L], z[::L], 'Pr',sigmaf[::L],z[::L],'cv',markersize=10, markerfacecolor='none', linewidth=2)
+plt.plot(sigmav_active[::L],z[::L],'b-.',sigma1_active[::L],z[::L],'go', UYS_active[::L], z[::L], 'Pr',sigmaf[::L],z[::L],'cv',markersize=10, markerfacecolor='none', linewidth=2)
 plt.xlabel("stress (Pa)",fontsize=22)
 plt.ylabel("height (m)",fontsize=22)
 plt.xticks(fontsize=22)
