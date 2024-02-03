@@ -50,14 +50,21 @@ Z = r[k-1].z                    # Z values (height) for the position of the vess
 # It also gives the radius (or x-location) associated with the height of the powder
 [HEIGHT, RADIUS] = height_position(X, Z, fill_percent)
 
-# Vertical stress by the powder in both active and passive mode
-# Passive state: F=1 is funnel flow and F=0 is mass flow in the passive state
-# Passive state: If F=0, P=0 is no-arch and P=1 is equivalent to arch formation.
-# Passive state: If F=1 and P=2, we have a funnel flow with rathole formation
-# Passive state: If F=1 and P=-2, we have a funnel flow but no rathole forms
-[Q, M, F, P, ANGLE, theta_critical, z, sigmav_active, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive,
- rhob_active_conical_outlet, rhob_passive_conical_outlet, sigma1_active_conical_outlet, sigma1_passive_conical_outlet] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
 
+[M, F, P, ANGLE, theta_critical, z, sigmav_active, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive,
+ rhob_active_conical_outlet, rhob_passive_conical_outlet, sigma1_active_conical_outlet, sigma1_passive_conical_outlet] = stress_profile(KK, HEIGHT, RADIUS, X, Z)
+# M = 0                         # No arch is predicted in the active state
+# M = 1                         # An arch formation is predicted in the active state
+# F = 0                         # Mass flow regime in the passive state is predicted
+# F = 1                         # Funnel flow regime in the passive state is predicted
+# F = 0 and P = 0               # No arch formation is predicted in the passive state
+# F = 0 and P = 1               # An arch formation is predicted in the passive state
+# F = 1 and P = 2               # Rathole formation is predicted in the funnel flow
+# F = 1 and P = -2              # No rathole formation is predicted in the funnel flow
+if (M==0):
+    output_active = "No arch in the active state is predicted"
+if (M==1):
+    output_active = "An arch in the active state is predicted"
 if (F==1 and P==2):
     output_passive = "A funnel flow with a rathole in the passive state is predicted"
 if (F==1 and P==-2):
@@ -65,21 +72,17 @@ if (F==1 and P==-2):
 if (F==0 and P==0):
     output_passive = "Mass flow without any arch in the passive state is predicted"
 if (F==0 and P==1):
-    output_passive = "Mass flow with with an arch in the passive state is predicted"
-if (M==0):
-    output_active = "No arch in the active state is predicted"
-if (M==1):
-    output_active = "An arch in the active state is predicted"
-if (Q==2):
-    output_passive2 = "An arch in the passive state is predicted"
-if (Q==-2):
-    output_passive2 = "No arch forms in the passive state is predicted"
-if (Q==-1):
-    output_passive2 = "No funnel flow is predicted"
+    output_passive = "Arch formation in the passive state is predicted"
+
+#if (Q==2):
+#    output_passive2 = "An arch in the passive state is predicted"
+#if (Q==-2):
+#    output_passive2 = "No arch forms in the passive state is predicted"
+#if (Q==-1):
+#    output_passive2 = "No funnel flow is predicted"
 
 print("1. "+output_active)
-print("2. "+output_passive2)
-print("3. "+output_passive)
+print("2. "+output_passive)
 
 
 # Chance of arch formation in the active state
@@ -90,15 +93,15 @@ rhob_active_outlet =a[0]*sigma1_active[-1]+b[0]                                 
 rhob_passive_outlet = a[0]*sigma1_passive[-1]+b[0]                                                                      # Bulk density as a function of MPS in the passive mode
 WFA = a[4]*sigma1_active[-1]**b[4]+c[4]                                                                                 # wall friction angle in the active state
 
-print("4. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(ANGLE,1), "degrees")
-print("5. The vertical load at the outlet of the hopper is", round(sigma1_active_conical_outlet,1), "Pa")
-print("6. Bulk density at the outlet in the active state is", round(rhob_active_conical_outlet,1), "kg/m3")
-print("7. Bulk density at the outlet in the passive state is", round(rhob_passive_conical_outlet,1), "kg/m3")
-print("8. Critical mass flow angle is ", round(theta_critical,1),"degrees")
-print("9. Arching diameter for the active state is", round(D_arching_active,1), "mm")
-print("10. Arching diameter for the passive state is", round(D_arching_passive,1), "mm")
-print("11. Rathole diameter is (for passive state)", round(1000*RH_diameter,1), "mm")
-print("12. Major principal stress in the passive state at the outlet is", round(sigma1_passive_conical_outlet,1), "Pa")
+print("3. The outlet diameter is", round(2*X[-1]*1000,1), "mm and the angle from the vertical for the outlet is", round(ANGLE,1), "degrees")
+print("4. The vertical load at the end of the last conical part of the hopper is", round(sigma1_active_conical_outlet,1), "Pa")
+print("5. Bulk density at the end of the last conical part of the hopper in the active state is", round(rhob_active_conical_outlet,1), "kg/m3")
+print("6. Bulk density at the end of the last conical part of the hopper in the passive state is", round(rhob_passive_conical_outlet,1), "kg/m3")
+print("7. Critical mass flow angle is ", round(theta_critical,1),"degrees")
+print("8. Arching diameter for the active state is", round(D_arching_active,1), "mm")
+print("9. Arching diameter for the passive state is", round(D_arching_passive,1), "mm")
+print("10. Rathole diameter is (relevant for funnel flow scenario only)", round(1000*RH_diameter,1), "mm")
+print("11. Major principal stress in the passive state at the last conical part of the hopper is", round(sigma1_passive_conical_outlet,1), "Pa")
 
 ## showing the dimensions of the hopper
 percent = percent[::-1]                                                                                                 # reversing the percent of filling order for convinience
@@ -114,7 +117,7 @@ plt.ylabel("y-axis (m)",fontsize=16)
 plt.xticks(fontsize=16)
 plt.yticks(fontsize=16)
 volume_liter = round(1000*volume,2)                                             # m3 to liter
-plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive +"\n %s" %output_passive2\
+plt.title("The volume of %s" %r[k-1].name + f" is {volume_liter:0.2f} liter."+"\n %s" %output_active +"\n %s" %output_passive \
           +"\n The critical mass flow angle is %0.1f" %theta_critical + " while the hopper angle from the vertical is %0.1f" %ANGLE, \
           fontsize=14)
 plt.show()

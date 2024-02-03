@@ -79,17 +79,18 @@ def stress_profile(KK, HEIGHT, RADIUS, X, Z):
     sigmaf_o = circumferential_stress(N, number, sigma1_active, X2)
     sigmaf = sigmaf_o
 
-    #ANGLE is the angle from the vertical of the last conical part of the hopper
-    [Q, M, F, P, ANGLE, theta_critical] = MassFlow_or_FunnelFlow(X1, X2, Z1, Z2, sigma1_active, sigma1_passive, sigmaf, N, number, ANGLE,
-                                                                 UYS_passive_conical_outlet, sigma1_passive_conical_outlet, rhob_passive_conical_outlet, WFA_passive_conical_outlet,
-                                                                 PHIE_passive_conical_outlet,UYS_active_conical_outlet, sigma1_active_conical_outlet, rhob_active_conical_outlet,
-                                                                 WFA_active_conical_outlet, PHIE_active_conical_outlet)
-
     PHILIN_p = a[3] * sigma1_active_conical_outlet + b[3]                                           # Eq. (23) of the reference
     G = -6.86712 + 0.58911 * PHILIN_p - 0.012966 * PHILIN_p ** 2.0 + 0.00011939 * PHILIN_p ** 3.0   # Jenike Bulletin 123 P67
     RH_diameter = G * UYS_active_conical_outlet / (rhob_active_conical_outlet * 9.8)
 
-    return Q, M, F, P, ANGLE, theta_critical, z, sigmav_active, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive, \
+    #ANGLE is the angle from the vertical of the last conical part of the hopper
+    [M, F, P, ANGLE, theta_critical] = MassFlow_or_FunnelFlow(X2, sigma1_active, sigmaf, N, number, ANGLE,
+                                                                 UYS_passive_conical_outlet, sigma1_passive_conical_outlet, WFA_passive_conical_outlet,
+                                                                 PHIE_passive_conical_outlet,UYS_active_conical_outlet, rhob_active_conical_outlet, RH_diameter)
+
+
+
+    return M, F, P, ANGLE, theta_critical, z, sigmav_active, sigma1_active, sigma1_passive, UYS_active, UYS_passive, sigmaf, RH_diameter, D_arching_active, D_arching_passive, \
         rhob_active_conical_outlet, rhob_passive_conical_outlet, sigma1_active_conical_outlet, sigma1_passive_conical_outlet
 
 
