@@ -18,6 +18,8 @@ from height_position import *                                                   
 from stress_profile import *                                                                                            #This function estimates the stress profile in both active and passive modes
 from curve_fitting import *                                                                                             #This function does linear and power curve fitting on effective angle of internal friction, bulk density,
 
+
+##
 KK = 0.4                                                                                                                #Horizontal stress to vertical stress, which is typically equal to 0.3 to 0.6 for powders
 print("I am assuming the horizontal to vertical stress ratio is equal to ", KK)
 
