@@ -1,6 +1,6 @@
-(1) These codes here are developed in Python. Similar (but not identical) codes are also developed in MATLAB with more features. However, MATLAB codes are not shared in my repositories
+(1) These codes here are developed in Python as a personal side project and just as a demo of a more advanced version developed in MATLAB.
 ---
-(2)The numbers, input, and dimensions provided in this code are not real purposely.
+(2) The input and dimensions provided in this code are not real purposely.
 ---
 (3) The code is mostly based on the methodology developed by Leung et al, "A proposed complete methodology to predict gravity flow obstruction of pharmaceutical 
 powders in drug product manufacturing." Journal of pharmaceutical sciences 108.1 (2019): 464-475. However, some of the equations in "Dietmar Schulze, 
