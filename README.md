@@ -14,5 +14,3 @@ pattern, arch formation under active stress (filling, initial discharging) and p
 -----
 (6) In the cylinderical part of the hopper, the stress (vertical stress and MPS) profiles are obtained using Janssen equation. The stress profile is the active state in the conical part is obtained using Motzkus equation
 -----
-(7) I estimated the MPS at the outlet of the conical part of the hopper using radial stress theory.
------
